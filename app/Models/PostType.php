@@ -9,5 +9,7 @@ class PostType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['typeName'];
+    protected $fillable = [
+        'typeName'
+    ];
 }

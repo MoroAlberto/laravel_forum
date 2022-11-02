@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostType;
-use App\Models\Type;
 use App\Models\User;
-use Illuminate\Contracts\Session\Session;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -18,13 +15,18 @@ class PostController extends Controller
         $posts = Post::all();
         $postTypes = PostType::all();
         session()->forget('currentFilter');
-        return view('posts.index', ['posts' => $posts, 'types' => $postTypes]);
+        return view('posts.index', [
+            'posts' => $posts,
+            'types' => $postTypes
+        ]);
     }
 
     public function create()
     {
         $postTypes = PostType::all();
-        return view('posts.create', ['types' => $postTypes]);
+        return view('posts.create', [
+            'types' => $postTypes
+        ]);
     }
 
     public function createSubmit(Post $post)
@@ -33,7 +35,6 @@ class PostController extends Controller
         $post->content = request("content");
         $post->typeID = request('type');
         $post->postedBy = Auth::user()->id;
-
         $post->save();
         return redirect('/');
     }
@@ -41,9 +42,11 @@ class PostController extends Controller
     public function edit($slug)
     {
         $selectedPost = Post::find($slug);
-        $currentuser = Auth::id();
-        if ($selectedPost->postedBy == $currentuser) {
-            return view('posts.edit', ['post' => $selectedPost]);
+        $currentUser = Auth::id();
+        if ($selectedPost->postedBy == $currentUser) {
+            return view('posts.edit', [
+                'post' => $selectedPost
+            ]);
         } else {
             return back()->with('errorMsg', 'You do not have permission to edit this post');
         }
@@ -55,7 +58,6 @@ class PostController extends Controller
         $selectedPost->title = request('title');
         $selectedPost->content = request('content');
         $selectedPost->save();
-
         return redirect('/');
     }
 
@@ -67,7 +69,6 @@ class PostController extends Controller
         }
         $selectedPost = Post::find($slug);
         $selectedPost->delete();
-
         return redirect('/');
     }
 
@@ -75,9 +76,13 @@ class PostController extends Controller
     {
         $filterID = request('typeFilter');
         $filteredTypes = Post::get()->where('typeID', '=', $filterID);
-        $filtername = PostType::select(['typeName'])->where('id', '=', $filterID)->get();
+        $filterName = PostType::select(['typeName'])->where('id', '=', $filterID)->get();
         $types = PostType::all();
-        return view('posts.index', ['posts' => $filteredTypes, 'types' => $types, 'filterName' => $filtername]);
+        return view('posts.index', [
+            'posts' => $filteredTypes,
+            'types' => $types,
+            'filterName' => $filterName
+        ]);
     }
 
     public function details($slug)
@@ -87,9 +92,13 @@ class PostController extends Controller
         $selectedComments = Comment::select()->where('postID', '=', $slug)->get();
         $commentUsers = [];
         foreach ($selectedComments as $comment) {
-            array_push($commentUsers, User::select('name')->where('id', '=', $comment->userID)->get());
+            $commentUsers[] = User::select('name')->where('id', '=', $comment->userID)->get();
         }
         return view('posts.details',
-            ['post' => $selectedPost, 'comments' => $selectedComments, 'users' => $commentUsers]);
+            [
+                'post' => $selectedPost,
+                'comments' => $selectedComments,
+                'users' => $commentUsers
+            ]);
     }
 }

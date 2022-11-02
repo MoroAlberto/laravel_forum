@@ -9,23 +9,18 @@
 
 </head>
 <body>
-
     <main class="app-container">
-        <h1 class="title">Welcome to my crud page</h1>
+        <h1 class="title">Welcome to my forum</h1>
         @auth
          You are logged in as <strong>{{Auth::user()->name}}</strong>
-
         <form action="logout">
             <button>Logout</button>
         </form>
-
-            @if(Auth::user()->is_admin == 1)
-                You are an admin, this means that you can create a user.
-                <form action="/user-creation"><button>Create user</button></form>
-            @endif
+{{--            @if(Auth::user()->is_admin == 1)--}}
+{{--                You are an admin, this means that you can create a user.--}}
+{{--                <form action="/user-creation"><button>Create user</button></form>--}}
+{{--            @endif--}}
         @endauth
-
-
 
         @if(Session::has('userCreated'))
             {{Session::get('userCreated')}}
@@ -37,11 +32,9 @@
         <form action="login" method="POST">
             @csrf
             <label for="email">Email: </label>
-            <input type="text" placeholder="Email" name="email">
-
+            <input type="text" placeholder="Email" name="email" id="email">
             <label for="password">Password: </label>
-            <input type="password" name="password" placeholder="Password">
-
+            <input type="password" name="password" id="password" placeholder="Password">
             <button>Submit</button>
         </form>
         @endguest
@@ -50,33 +43,29 @@
            <div class="error-message">{{Session::get('errorMsg')}}</div>
         @endif
 
-        <div class="filter-buttons">
-            <form action="/post-filter" method="POST">
-                @csrf
-                <select name="typeFilter" id="typeFilter">
-                @foreach($types as $type)
-                    <option value="{{$type->id}}">{{$type->typeName}}</option>
-                @endforeach
-                </select>
-                <button>Filter</button>
-            </form>
-
-            <form action="/">
-                <button>Clear filters</button>
-            </form>
-        </div>
-
-        @if (isset($filterName))
-            Current filter: {{$filterName[0]->typeName}}
-        @endif
+{{--        <div class="filter-buttons">--}}
+{{--            <form action="/post-filter" method="POST">--}}
+{{--                @csrf--}}
+{{--                <select name="typeFilter" id="typeFilter">--}}
+{{--                @foreach($types as $type)--}}
+{{--                    <option value="{{$type->id}}">{{$type->typeName}}</option>--}}
+{{--                @endforeach--}}
+{{--                </select>--}}
+{{--                <button>Filter</button>--}}
+{{--            </form>--}}
+{{--            <form action="/">--}}
+{{--                <button>Clear filters</button>--}}
+{{--            </form>--}}
+{{--        </div>--}}
+{{--        @if (isset($filterName))--}}
+{{--            Current filter: {{$filterName[0]->typeName}}--}}
+{{--        @endif--}}
 
         @foreach ($posts as $post )
         <div class="post-container">
             <p class="post-title"><a href="/{{$post->id}}">{{$post->title}}</a></p>
             <p class="post-content">{{$post->content}}</p>
-
             <p class="post-user">Posted by: {{App\Models\User::find($post->postedBy)->name}}</p>
-
             <div class="button-container">
                 <form action="/{{$post->id}}/edit">
                     <button>Edit post</button>
