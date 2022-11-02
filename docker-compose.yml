@@ -3,7 +3,7 @@ services:
     #MySQL Service
     database:
         image: mysql:8.0
-        container_name: db3
+        container_name: db
         restart: unless-stopped
         tty: true
         ports:

@@ -17,8 +17,10 @@ cp .env.example .env
 php artisan key:generate
 docker-compose up -d
 php artisan migrate
+php artisan db:seed
 npm run dev
 php artisan serve
 ```
 
-After this, [go to localhost](http://127.0.0.1/) to update your forum
+After this, [go to localhost](http://127.0.0.1/) to update your forum.
+To start you can use user test@gmail.com with password password
