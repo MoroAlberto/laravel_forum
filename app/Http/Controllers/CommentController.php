@@ -13,8 +13,8 @@ class CommentController extends Controller
         $commentBody = request('comment');
         $comment->comment = $commentBody;
         $comment->likes = 0;
-        $comment->postID = request('post-id');
-        $comment->userID = Auth::id();
+        $comment->post_id = request('post-id');
+        $comment->user_id = Auth::id();
         $comment->save();
         return back();
     }

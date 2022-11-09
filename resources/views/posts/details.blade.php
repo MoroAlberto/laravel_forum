@@ -12,12 +12,12 @@
     <div class="post-container">
         <p class="post-title">{{$post->title}}</p>
         <p class="post-content">{{$post->content}}</p>
-        <p class="post-user">Posted by: {{App\Models\User::find($post->postedBy)->name}}</p>
+        <p class="post-user">Posted by: {{ $post->user->name}} on {{ $post->updated_at->format('d/m/Y')}}</p>
     </div>
     <h1 class="title">Comments</h1>
     @foreach ($comments as $index => $comment )
         <div class="comments-container">
-            <h1>{{$users[$index][0]->name}}</h1>
+            <h1>{{$comment->user->name}}</h1>
             <p>{{$comment->comment}}</p>
             <p class="comment-likes">Likes: {{$comment->likes}}</p>
         </div>

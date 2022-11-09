@@ -4,6 +4,11 @@ This is a little "for-fun" app
 
 Based on Laravel 9
 
+## Technical Requirements
+
+•   PHP 8.0 or higher <br>
+•	Composer installed <br>
+
 ## Installation
 
 You can install this program by executing the following commands:

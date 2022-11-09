@@ -5,12 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create</title>
-    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-<main class="app-container">
-    <h1 class="title">Create a post</h1>
-    <form action="/submit" class="edit-container" method="POST">
+<main class="w-6/12 m-auto">
+    <h1 class="m-auto justify-center font-bold text-gray-600 mt-2 mb-2">Create a post</h1>
+    <form action="/submit" method="POST">
         @csrf
         <div>
             <label for="title">Title: </label>

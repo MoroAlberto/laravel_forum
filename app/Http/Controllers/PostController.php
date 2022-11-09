@@ -33,8 +33,8 @@ class PostController extends Controller
     {
         $post->title = request('title');
         $post->content = request("content");
-        $post->typeID = request('type');
-        $post->postedBy = Auth::user()->id;
+        $post->post_type_id = request('type');
+        $post->user_id = Auth::user()->id;
         $post->save();
         return redirect('/');
     }
@@ -43,7 +43,7 @@ class PostController extends Controller
     {
         $selectedPost = Post::find($slug);
         $currentUser = Auth::id();
-        if ($selectedPost->postedBy == $currentUser) {
+        if ($selectedPost->user_id == $currentUser) {
             return view('posts.edit', [
                 'post' => $selectedPost
             ]);
@@ -63,7 +63,7 @@ class PostController extends Controller
 
     public function delete($slug)
     {
-        $selectedComments = Comment::get()->where('postID', '=', $slug);
+        $selectedComments = Comment::get()->where('post_id', '=', $slug);
         foreach ($selectedComments as $comment) {
             $comment->delete();
         }
@@ -75,7 +75,7 @@ class PostController extends Controller
     public function filter()
     {
         $filterID = request('typeFilter');
-        $filteredTypes = Post::get()->where('typeID', '=', $filterID);
+        $filteredTypes = Post::get()->where('post_type_id', '=', $filterID);
         $filterName = PostType::select(['typeName'])->where('id', '=', $filterID)->get();
         $types = PostType::all();
         return view('posts.index', [
@@ -89,10 +89,10 @@ class PostController extends Controller
     {
         $selectedPost = Post::find($slug);
 
-        $selectedComments = Comment::select()->where('postID', '=', $slug)->get();
+        $selectedComments = Comment::select()->where('post_id', '=', $slug)->get();
         $commentUsers = [];
         foreach ($selectedComments as $comment) {
-            $commentUsers[] = User::select('name')->where('id', '=', $comment->userID)->get();
+            $commentUsers[] = User::select('name')->where('id', '=', $comment->user_id)->get();
         }
         return view('posts.details',
             [
