@@ -18,16 +18,16 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            return redirect('/');
+            return redirect()->route('forum.index');
         } else {
-            return Redirect::back()->with(['errorMsg' => 'Unsuccessful login!']);
+            return Redirect::back()->with(['alert_message' => 'Unsuccessful login!']);
         }
     }
 
     public function logout()
     {
         Auth::logout();
-        return redirect('/');
+        return redirect()->route('forum.index');
     }
 
     public function createUser()
@@ -49,6 +49,6 @@ class LoginController extends Controller
 
         $user->save();
 
-        return redirect('/')->with('userCreated', 'User has been successfully created');
+        return redirect()->route('forum.index')->with('success', 'User has been successfully created');
     }
 }

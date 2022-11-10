@@ -10,7 +10,18 @@ class Comment extends Model
 {
     use HasFactory;
 
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'likes' => 0,
+    ];
+
     protected $fillable = [
+        'user_id',
+        'post_id',
         'comment',
         'likes'
     ];

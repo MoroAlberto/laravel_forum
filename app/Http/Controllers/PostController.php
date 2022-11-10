@@ -6,6 +6,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostType;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
@@ -29,14 +30,31 @@ class PostController extends Controller
         ]);
     }
 
-    public function createSubmit(Post $post)
+    public function store(Post $post)
     {
         $post->title = request('title');
         $post->content = request("content");
         $post->post_type_id = request('type');
         $post->user_id = Auth::user()->id;
         $post->save();
-        return redirect('/');
+        return redirect()->route('forum.index')->with('success', 'Post created successfully');
+    }
+
+    public function show($slug)
+    {
+        $selectedPost = Post::find($slug);
+
+        $selectedComments = Comment::select()->where('post_id', '=', $slug)->get();
+        $commentUsers = [];
+        foreach ($selectedComments as $comment) {
+            $commentUsers[] = User::select('name')->where('id', '=', $comment->user_id)->get();
+        }
+        return view('posts.show',
+            [
+                'post' => $selectedPost,
+                'comments' => $selectedComments,
+                'users' => $commentUsers
+            ]);
     }
 
     public function edit($slug)
@@ -48,35 +66,34 @@ class PostController extends Controller
                 'post' => $selectedPost
             ]);
         } else {
-            return back()->with('errorMsg', 'You do not have permission to edit this post');
+            return back()->with('alert_message', 'You do not have permission to edit this post');
         }
     }
 
-    public function editSubmit($slug)
+    public function update($slug)
     {
         $selectedPost = Post::find($slug);
         $selectedPost->title = request('title');
         $selectedPost->content = request('content');
         $selectedPost->save();
-        return redirect('/');
+        return redirect()->route('forum.index')->with('success', 'Post updated successfully');
     }
 
-    public function delete($slug)
+    /**
+     * @param Post $id
+     * @return RedirectResponse
+     */
+    public function destroy(Post $id): RedirectResponse
     {
-        $selectedComments = Comment::get()->where('post_id', '=', $slug);
-        foreach ($selectedComments as $comment) {
-            $comment->delete();
-        }
-        $selectedPost = Post::find($slug);
-        $selectedPost->delete();
-        return redirect('/');
+        $id->delete();
+        return redirect()->route('forum.index')->with('success', 'Post deleted successfully');
     }
 
     public function filter()
     {
         $filterID = request('typeFilter');
         $filteredTypes = Post::get()->where('post_type_id', '=', $filterID);
-        $filterName = PostType::select(['typeName'])->where('id', '=', $filterID)->get();
+        $filterName = PostType::select(['name'])->where('id', '=', $filterID)->get();
         $types = PostType::all();
         return view('posts.index', [
             'posts' => $filteredTypes,
@@ -85,20 +102,5 @@ class PostController extends Controller
         ]);
     }
 
-    public function details($slug)
-    {
-        $selectedPost = Post::find($slug);
 
-        $selectedComments = Comment::select()->where('post_id', '=', $slug)->get();
-        $commentUsers = [];
-        foreach ($selectedComments as $comment) {
-            $commentUsers[] = User::select('name')->where('id', '=', $comment->user_id)->get();
-        }
-        return view('posts.details',
-            [
-                'post' => $selectedPost,
-                'comments' => $selectedComments,
-                'users' => $commentUsers
-            ]);
-    }
 }

@@ -12,7 +12,7 @@ class PostType extends Model
     use HasFactory;
 
     protected $fillable = [
-        'typeName'
+        'name'
     ];
 
     public function posts(): HasMany

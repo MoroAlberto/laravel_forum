@@ -20,10 +20,10 @@ class PostTableSeeder extends Seeder
     public function run(): void
     {
         PostType::create([
-            'typeName' => 'Food'
+            'name' => 'Food'
         ]);
         PostType::create([
-            'typeName' => 'Games'
+            'name' => 'Games'
         ]);
         User::create([
             'name' => 'Jack Smith',

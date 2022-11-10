@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Like extends Model
 {
     use HasFactory;
+
+    protected $attributes = [
+        'is_dislike' => 0,
+    ];
+
+    protected $fillable = [
+        'is_dislike'
+    ];
 }
