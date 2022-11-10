@@ -5,8 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Posts Index</title>
-    {{--    <link href="{{ asset('css/app.css') }}" rel="stylesheet">--}}
-    @vite(['resources/css/app.css'])
+    @vite('resources/js/app.js')
 </head>
 <body class="h-screen overflow-hidden flex items-center justify-center" style="background: #edf2f7;">
 <main class="w-6/12 m-auto">
@@ -16,15 +15,13 @@
         <form action="logout">
             <button>Logout</button>
         </form>
-        {{--            @if(Auth::user()->is_admin == 1)--}}
-        {{--                You are an admin, this means that you can create a user.--}}
-        {{--                <form action="/user-creation"><button>Create user</button></form>--}}
-        {{--            @endif--}}
+        @if(Auth::user()->is_admin == 1)
+            You are an admin, this means that you can create a user.
+            <form action="/user-creation">
+                <button>Create user</button>
+            </form>
+        @endif
     @endauth
-
-    @if(Session::has('userCreated'))
-        {{Session::get('userCreated')}}
-    @endif
 
     @guest
         Please login down below:
@@ -39,31 +36,43 @@
         </form>
     @endguest
 
-    @if(Session::has('errorMsg'))
-        <div class="error-message">{{Session::get('errorMsg')}}</div>
+    @if(Session::has('alert_message'))
+        <x-alert :message="session('alert_message')" type="error"></x-alert>
+    @endif
+    @if (session('success'))
+        <div id="alert-1" class="flex p-4 mb-4 bg-blue-100 rounded-lg dark:bg-blue-200" role="alert">
+            <svg aria-hidden="true" class="flex-shrink-0 w-5 h-5 text-blue-700 dark:text-blue-800" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            <span class="sr-only">Info</span>
+            <div class="ml-3 text-sm font-medium text-blue-700 dark:text-blue-800">
+                {{ session('success') }}
+            </div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-blue-100 text-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 p-1.5 hover:bg-blue-200 inline-flex h-8 w-8 dark:bg-blue-200 dark:text-blue-600 dark:hover:bg-blue-300" data-dismiss-target="#alert-1" aria-label="Close">
+                <span class="sr-only">Close</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+        </div>
     @endif
 
-    {{--        <div class="filter-buttons">--}}
-    {{--            <form action="/post-filter" method="POST">--}}
-    {{--                @csrf--}}
-    {{--                <select name="typeFilter" id="typeFilter">--}}
-    {{--                @foreach($types as $type)--}}
-    {{--                    <option value="{{$type->id}}">{{$type->typeName}}</option>--}}
-    {{--                @endforeach--}}
-    {{--                </select>--}}
-    {{--                <button>Filter</button>--}}
-    {{--            </form>--}}
-    {{--            <form action="/">--}}
-    {{--                <button>Clear filters</button>--}}
-    {{--            </form>--}}
-    {{--        </div>--}}
-    {{--        @if (isset($filterName))--}}
-    {{--            Current filter: {{$filterName[0]->typeName}}--}}
-    {{--        @endif--}}
-    <!-- This is an example component -->
+            <div class="filter-buttons">
+                <form action="/post-filter" method="POST">
+                    @csrf
+                    <select name="typeFilter" id="typeFilter">
+                    @foreach($types as $type)
+                        <option value="{{$type->id}}">{{$type->name}}</option>
+                    @endforeach
+                    </select>
+                    <button>Filter</button>
+                </form>
+                <form action="/">
+                    <button>Clear filters</button>
+                </form>
+            </div>
+            @if (isset($filterName))
+                Current filter: {{$filterName[0]->name}}
+            @endif
     <div class='items-center justify-center min-h-screen'>
         @foreach ($posts as $post )
-            <div class="rounded-xl border p-5 shadow-md w-9/12 bg-white">
+            <div class="rounded-xl border p-5 shadow-md bg-white">
                 <div class="flex w-full items-center justify-between border-b pb-3">
                     <div class="flex items-center space-x-3">
                         <div class="h-8 w-8 rounded-full bg-slate-400 bg-[url('https://i.pravatar.cc/32')]"></div>
@@ -71,12 +80,12 @@
                     </div>
                     <div class="flex items-center space-x-8">
                         <button
-                            class="rounded-2xl border bg-neutral-100 px-3 py-1 text-xs font-semibold">{{$post->postType->typeName}}</button>
-                        {{--                    <div class="text-xs text-neutral-500">2 hours ago</div>--}}
+                            class="rounded-2xl border bg-neutral-100 px-3 py-1 text-xs font-semibold">{{$post->postType->name}}</button>
+                        <div class="text-xs text-neutral-500">{{ $post->created_at->diffForHumans() }}</div>
                     </div>
                 </div>
                 <div class="mt-4 mb-6">
-                    <a class="mb-3 text-xl font-bold" href="/{{$post->id}}">{{$post->title}}</a>
+                    <a class="mb-3 text-xl font-bold" href="{{ route('forum.show',$post->id) }}">{{$post->title}}</a>
                     <div class="text-sm text-neutral-600">{{$post->content}}
                     </div>
                 </div>
@@ -99,12 +108,14 @@
                                 </svg>
                                 <span>{{count($post->likes)}}</span>
                             </div>
-                            <form action="/{{$post->id}}/edit">
+                            <form action="{{route('forum.edit',[$post->id])}}">
                                 <button>Edit post</button>
                             </form>
                             @auth
-                                <form action="/{{$post->id}}/delete">
-                                    <button>Delete post</button>
+                                <form action="{{route('forum.destroy',[$post->id])}}" method="POST">
+                                    @method('DELETE')
+                                    @csrf
+                                    <button type="submit">Delete post</button>
                                 </form>
                             @endauth
                         </div>
@@ -112,16 +123,16 @@
                 </div>
             </div>
         @endforeach
+        @guest
+            <p class="m-2">You must log in to make a post!</p>
+        @endguest
+        @auth
+            <form action="{{route('forum.create')}}">
+                <button class="">Create a post</button>
+            </form>
+        @endauth
     </div>
 
-    @guest
-        <p class="m-2">You must log in to make a post!</p>
-    @endguest
-    @auth
-        <form action="/create">
-            <button class="">Create a post</button>
-        </form>
-    @endauth
 </main>
 </body>
 </html>
