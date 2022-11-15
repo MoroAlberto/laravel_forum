@@ -6,25 +6,36 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostType;
 use App\Models\User;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function index()
+
+    /**
+     * @return Factory|View|Application
+     */
+    public function index(): Factory|View|Application
     {
         $posts = Post::all();
         $postTypes = PostType::all();
         session()->forget('currentFilter');
-        return view('welcome', [
-            'slot' => view('posts.index', [
-                'posts' => $posts,
-                'types' => $postTypes
-            ])
+        return view('posts.index', [
+            'posts' => $posts,
+            'types' => $postTypes
         ]);
     }
 
-    public function create()
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Factory|View|Application
+     */
+    public function create(): Factory|View|Application
     {
         $postTypes = PostType::all();
         return view('posts.create', [
@@ -32,21 +43,36 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(Post $post)
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
     {
-        $post->title = request('title');
-        $post->content = request("content");
-        $post->post_type_id = request('type');
-        $post->user_id = Auth::user()->id;
-        $post->save();
+        $request->validate([
+            'title' => 'required|unique:posts',
+            'content' => 'required|string',
+            'type' => 'required|integer|min:1|exists:post_types,id',
+        ]);
+        Post::create([
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'post_type_id' => $request->input('type'),
+            'user_id' => Auth::user()->id
+        ]);
         return redirect()->route('forum.index')->with('success', 'Post created successfully');
     }
 
-    public function show($slug)
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return Factory|View|Application
+     */
+    public function show(int $id): Factory|View|Application
     {
-        $selectedPost = Post::find($slug);
-
-        $selectedComments = Comment::select()->where('post_id', '=', $slug)->get();
+        $selectedPost = Post::find($id);
+        $selectedComments = Comment::select()->where('post_id', '=', $id)->get();
         $commentUsers = [];
         foreach ($selectedComments as $comment) {
             $commentUsers[] = User::select('name')->where('id', '=', $comment->user_id)->get();
@@ -59,24 +85,42 @@ class PostController extends Controller
             ]);
     }
 
-    public function edit($slug)
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return Factory|View|Application|RedirectResponse
+     */
+    public function edit(int $id): Factory|View|Application|RedirectResponse
     {
-        $selectedPost = Post::find($slug);
+        $selectedPost = Post::find($id);
         $currentUser = Auth::id();
         if ($selectedPost->user_id == $currentUser) {
             return view('posts.edit', [
                 'post' => $selectedPost
             ]);
         } else {
-            return back()->with('alert_message', 'You do not have permission to edit this post');
+            return back()->with('error', 'You do not have permission to edit this post');
         }
     }
 
-    public function update($slug)
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function update(Request $request, int $id): RedirectResponse
     {
-        $selectedPost = Post::find($slug);
-        $selectedPost->title = request('title');
-        $selectedPost->content = request('content');
+        $request->validate([
+            'title' => 'required|unique:posts',
+            'content' => 'required|string',
+            'type' => 'required|integer|min:1|exists:post_types,id',
+        ]);
+        $selectedPost = Post::find($id);
+        $selectedPost->title = $request->input('title');
+        $selectedPost->content = $request->input('content');
         $selectedPost->save();
         return redirect()->route('forum.index')->with('success', 'Post updated successfully');
     }
@@ -91,7 +135,10 @@ class PostController extends Controller
         return redirect()->route('forum.index')->with('success', 'Post deleted successfully');
     }
 
-    public function filter()
+    /**
+     * @return View|Factory|Application
+     */
+    public function filter(): View|Factory|Application
     {
         $filterID = request('typeFilter');
         $filteredTypes = Post::get()->where('post_type_id', '=', $filterID);
