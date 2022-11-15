@@ -13,8 +13,13 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
+                        {{ __('Homepage') }}
                     </x-nav-link>
+                    @auth
+                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                            {{ __('Create user') }}
+                        </x-nav-link>
+                    @endauth
                 </div>
             </div>
 

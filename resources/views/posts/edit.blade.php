@@ -1,29 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit</title>
-    @vite('resources/js/app.js')
-</head>
-<body>
-<main class="app-container">
-    <h1 class="title">Edit your post</h1>
-    <form action="{{route('forum.update',[$post->id])}}" class="edit-container" method="POST">
-        @method('PATCH')
-        @csrf
-        <div>
-            <label for="title">Title: </label>
-            <input type="text" name="title" id="title" placeholder="Please input a title" value='{{$post->title}}'
-                   required>
-            <label for="content">Content: </label>
-            <input type="text" name="content" id="content" placeholder="Please input some content"
-                   value='{{$post->content}}'
-                   required>
-        </div>
-        <button type="submit">Submit</button>
-    </form>
-</main>
-</body>
-</html>
+@extends('welcome')
+
+@section('slot')
+
+    <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
+        <form action="{{route('forum.update',[$post->id])}}" method="POST">
+            <div class="mt-4 mb-6">
+                <p class="mb-3 text-3xl font-bold">Edit your post</p>
+                @method('PATCH')
+                @csrf
+                <div class="ml-1 mr-1 text-2xl">
+                    <label for="title">Title: </label>
+                    <input type="text" name="title" id="title" placeholder="Please input a title"
+                           value='{{$post->title}}'
+                           required>
+                    <br>
+                    <br>
+                    <label for="content">Content: </label>
+                    <input type="text" name="content" id="content" placeholder="Please input some content"
+                           value='{{$post->content}}'
+                           required>
+                </div>
+            </div>
+            <div class="flex justify-between mt-4 ">
+                <x-primary-button type="submit">Submit</x-primary-button>
+            </div>
+        </form>
+    </div>
+    <div class="flex justify-between mt-4 ">
+        <div></div>
+        <form action="{{route('forum.index')}}" method="GET">
+            <x-primary-button>
+                {{ __('Back') }}
+            </x-primary-button>
+        </form>
+    </div>
+@endsection

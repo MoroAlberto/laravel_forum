@@ -1,50 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Details</title>
-    @vite('resources/js/app.js')
-</head>
-<body>
-<main class="app-container">
-    <div class="post-container">
-        <p class="post-title">{{$post->title}}</p>
-        <p class="post-content">{{$post->content}}</p>
-        <p class="post-user">Posted by: {{ $post->user->name}} on {{ $post->updated_at->format('d/m/Y')}}</p>
+@extends('welcome')
+
+@section('slot')
+    <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
+        <div class="mt-4 mb-6">
+            <p class="mb-3 text-3xl font-bold">{{$post->title}}</p>
+            <div class="ml-1 mr-1 text-2xl">{{$post->content}}
+            </div>
+        </div>
+        <div class="flex w-full items-center justify-between border-t pt-3">
+            <div class="flex items-center space-x-3">
+                <button
+                    class="rounded-2xl border bg-neutral-100 px-3 py-1 text-xs font-semibold">{{$post->postType->name}}</button>
+            </div>
+            <div class="flex items-center space-x-8">
+                <div class="text-xs text-neutral-500">Posted by: {{ $post->user->name}}
+                    on {{ $post->created_at->diffForHumans() }}</div>
+            </div>
+        </div>
     </div>
-    <h1 class="title">Comments</h1>
+    <h1 class="mb-3 text-3xl font-bold">Comments:</h1>
+    @if($comments->isEmpty())
+        <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
+            <div class="mt-2">
+                <p class="ml-1 mr-1 text">There are no comments on this post</p>
+            </div>
+        </div>
+    @endif
     @foreach ($comments as $index => $comment )
-        <div class="comments-container">
-            <h1>{{$comment->user->name}}</h1>
-            <p>{{$comment->comment}}</p>
-            <p class="comment-likes">Likes: {{$comment->likes}}</p>
+        <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2 bg-slate-300">
+            <div class="mt-2">
+                <div class="ml-1 mr-1 mb-3 text-xl">{{$comment->comment}}</div>
+                <p class="ml-1 mr-1 text">Posted by: {{ $post->user->name}}</p>
+                <div class="flex items-center transition hover:text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-5 w-5" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                    </svg>
+                    <span>{{$comment->likes}}</span>
+                </div>
+            </div>
         </div>
     @endforeach
 
     @auth
-        <div class="add-comment-container">
+        <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
             <form action="/add-comment" method="POST">
-                @csrf
-                <input type="hidden" name="post_id" value="{{$post->id}}">
-                <label for="comment">Comment:</label>
-                <input type="text" name="comment" id="comment">
-                <button>Submit comment</button>
+                <div class="mt-1 mb-1">
+                    <p class="mb-3 text-2xl font-bold">Create a comment</p>
+                    @csrf
+                    <input type="hidden" name="post_id" value="{{$post->id}}">
+                    <div class="ml-1 mr-1 text-1xl">
+                        <label for="comment">Comment: </label>
+                        <input type="text" name="comment" id="comment" placeholder="Please input a comment" required>
+                    </div>
+                </div>
+                <div class="flex justify-between mt-4 ">
+                    <x-primary-button type="submit"> {{ __('Submit comment') }}</x-primary-button>
+                </div>
             </form>
         </div>
     @endauth
-
-    @guest
-        <p>You must be logged in to post a comment</p>
-    @endguest
-
-    <div class="buttons-container">
+    <div class="flex justify-between mt-4 ">
+        @guest
+            <p class="m-2">You must be logged in to post a comment</p>
+        @endguest
+        <div></div>
         <form action="{{route('forum.index')}}" method="GET">
-            <button>Back</button>
+            <x-primary-button>
+                {{ __('Back') }}
+            </x-primary-button>
         </form>
     </div>
-</main>
 
-</body>
-</html>
+@endsection

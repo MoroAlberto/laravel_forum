@@ -23,7 +23,9 @@
     @endif
     <!-- Page Content -->
     <main>
+        <div class='items-center justify-center min-h-screen w-7/12 m-auto '>
         @yield('slot')
+        </div>
     </main>
 </div>
 </body>
