@@ -18,24 +18,32 @@ use Illuminate\Support\Facades\Hash;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::middleware([
+    'guest'
+])->group(function () {
+
+    Route::get('/', function () {
+        return redirect()->route('forum.index');
+    });
+    Route::prefix('/forum')->group(function (){
+        Route::get('/create', [PostController::class, 'create'])->name('forum.create');
+        Route::patch('/{id}', [PostController::class, 'update'])->name('forum.update');
+    });
+    Route::fallback(FallbackController::class);
+});
+
+require __DIR__.'/auth.php';
+
 Route::prefix('/forum')->group(function (){
     Route::get('/', [PostController::class, 'index'])->name('forum.index');
-    Route::get('/create', [PostController::class, 'create'])->name('forum.create');
     Route::get('/{id}', [PostController::class, 'show'])->name('forum.show');
     Route::post('/', [PostController::class, 'store'])->name('forum.store');
     Route::get('/edit/{id}', [PostController::class, 'edit'])->name('forum.edit');
     Route::patch('/{id}', [PostController::class, 'update'])->name('forum.update');
-    Route::delete('/{id}', [PostController::class, 'destroy'])->name('forum.destroy');
 });
 
-Route::post('/login', [LoginController::class, 'login']);
-Route::get('/user-creation', [LoginController::class, 'createUser']);
-Route::post('/create-submit', [LoginController::class, 'submitUser']);
-Route::get('/logout', [LoginController::class, 'logout']);
-
-Route::post('/post-filter', [PostController::class, 'filter']);
-
-Route::post('/add-comment', [CommentController::class, 'store']);
+//Route::post('/post-filter', [PostController::class, 'filter']);
+//Route::post('/add-comment', [CommentController::class, 'store']);
 
 //Fallback
-Route::fallback(FallbackController::class);
+

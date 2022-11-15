@@ -16,9 +16,11 @@ class PostController extends Controller
         $posts = Post::all();
         $postTypes = PostType::all();
         session()->forget('currentFilter');
-        return view('posts.index', [
-            'posts' => $posts,
-            'types' => $postTypes
+        return view('welcome', [
+            'slot' => view('posts.index', [
+                'posts' => $posts,
+                'types' => $postTypes
+            ])
         ]);
     }
 
