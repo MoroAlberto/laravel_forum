@@ -14,6 +14,8 @@ class Like extends Model
     ];
 
     protected $fillable = [
-        'is_dislike'
+        'is_dislike',
+        'post_id',
+        'user_id',
     ];
 }

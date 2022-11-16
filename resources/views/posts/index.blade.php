@@ -1,4 +1,4 @@
-@extends('welcome')
+@extends('layout')
 
 @section('slot')
     @if(session('error'))

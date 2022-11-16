@@ -1,8 +1,17 @@
 {
-    "name": "laravel/laravel",
+    "name": "moroalberto/laravel_forum",
+    "version": "1.1",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "description": "Laravel Forum",
+    "keywords": [
+        "laravel",
+        "laravel9",
+        "tailwindcss",
+        "docker",
+        "alpinejs",
+        "framework",
+        "forum"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
@@ -12,6 +21,7 @@
         "laravel/tinker": "^2.7"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.7",
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^1.14",
         "laravel/pint": "^1.0",
@@ -21,6 +31,12 @@
         "phpunit/phpunit": "^9.5.10",
         "spatie/laravel-ignition": "^1.0"
     },
+    "authors": [
+        {
+            "name": "MoroAlberto",
+            "email": "alberto.moro94@gmail.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/",

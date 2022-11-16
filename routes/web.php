@@ -31,8 +31,10 @@ Route::middleware([
     'auth'
 ])->group(function () {
     Route::prefix('/forum')->group(function () {
-        Route::get('/create', [PostController::class, 'create'])->name('forum.create');
-        Route::post('/', [PostController::class, 'store'])->name('forum.store');
+        Route::get('/create', [PostController::class, 'create'])
+            ->name('forum.create');
+        Route::post('/', [PostController::class, 'store'])
+            ->name('forum.store');
         Route::get('/edit/{id}', [PostController::class, 'edit'])
             ->where('id', '[0-9]+')
             ->name('forum.edit');
@@ -44,6 +46,7 @@ Route::middleware([
             ->name('forum.destroy');
     });
     Route::post('/add-comment', [CommentController::class, 'store']);
+    Route::post('/like', [PostController::class, 'like']);
 });
 
 require __DIR__ . '/auth.php';

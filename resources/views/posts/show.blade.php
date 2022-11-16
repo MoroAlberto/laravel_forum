@@ -1,4 +1,4 @@
-@extends('welcome')
+@extends('layout')
 
 @section('slot')
     <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">

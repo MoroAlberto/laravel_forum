@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');;
             $table->tinyInteger('is_dislike')->default(0);
             $table->timestamps();
+            $table->unique(array('post_id', 'user_id'));
         });
     }
 

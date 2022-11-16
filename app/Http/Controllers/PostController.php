@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ValidatePostRequest;
 use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostType;
 use App\Models\User;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -44,21 +47,17 @@ class PostController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param ValidatePostRequest $request
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(ValidatePostRequest $request): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required|unique:posts',
-            'content' => 'required|string',
-            'type' => 'required|integer|min:1|exists:post_types,id',
-        ]);
+        $request->validated();
         Post::create([
             'title' => $request->input('title'),
             'content' => $request->input('content'),
             'post_type_id' => $request->input('type'),
-            'user_id' => Auth::user()->id
+            'user_id' => Auth::id()
         ]);
         return redirect()->route('forum.index')->with('success', 'Post created successfully');
     }
@@ -107,17 +106,13 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param ValidatePostRequest $request
      * @param int $id
      * @return RedirectResponse
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(ValidatePostRequest $request, int $id): RedirectResponse
     {
-        $request->validate([
-            'title' => 'required|unique:posts',
-            'content' => 'required|string',
-            'type' => 'required|integer|min:1|exists:post_types,id',
-        ]);
+        $request->validated();
         $selectedPost = Post::find($id);
         $selectedPost->title = $request->input('title');
         $selectedPost->content = $request->input('content');
@@ -151,5 +146,34 @@ class PostController extends Controller
         ]);
     }
 
-
+    /**
+     * @return RedirectResponse|string[] $request
+     */
+    public function like(Request $request): array|RedirectResponse
+    {
+        $request->validate([
+            'post_id' => 'required|integer|min:1',
+        ]);
+        try {
+            Like::create([
+                'post_id' => $request->input('post_id'),
+                'user_id' => Auth::id()
+            ]);
+        } catch (QueryException $ex) {
+            return [
+                'message' => $ex->getMessage(),
+                'success' => false
+            ];
+        }
+        //Debugbar::info();
+        $message = "added";
+        $res = "true";
+        if ($request->expectsJson()) {
+            return [
+                'message' => $message,
+                'success' => $res
+            ];
+        }
+        return redirect()->route('forum.index');
+    }
 }
