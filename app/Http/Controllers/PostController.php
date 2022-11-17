@@ -66,11 +66,14 @@ class PostController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return Factory|View|Application
+     * @return Application|Factory|View|RedirectResponse
      */
-    public function show(int $id): Factory|View|Application
+    public function show(int $id)
     {
         $selectedPost = Post::find($id);
+        if (is_null($selectedPost)) {
+            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+        }
         $selectedComments = Comment::select()->where('post_id', '=', $id)->get();
         $commentUsers = [];
         foreach ($selectedComments as $comment) {
@@ -93,6 +96,9 @@ class PostController extends Controller
     public function edit(int $id): Factory|View|Application|RedirectResponse
     {
         $selectedPost = Post::find($id);
+        if (is_null($selectedPost)) {
+            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+        }
         $postTypes = PostType::all();
         $currentUser = Auth::id();
         if ($selectedPost->user_id == $currentUser) {
@@ -117,6 +123,9 @@ class PostController extends Controller
     {
         $request->validated();
         $selectedPost = Post::find($id);
+        if (is_null($selectedPost)) {
+            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+        }
         $selectedPost->title = $request->input('title');
         $selectedPost->content = $request->input('content');
         $selectedPost->post_type_id = $request->input('type');
@@ -131,6 +140,9 @@ class PostController extends Controller
     public function destroy(int $id): RedirectResponse
     {
         $selectedPost = Post::find($id);
+        if (is_null($selectedPost)) {
+            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+        }
         $currentUser = Auth::id();
         if ($selectedPost->user_id == $currentUser) {
             Post::destroy($id);

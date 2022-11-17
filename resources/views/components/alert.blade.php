@@ -39,7 +39,7 @@
             @default
                text-yellow-700
          @endswitch ">
-            {{$message}}
+            {!! $message !!}
         </div>
         <button type="button"
                 class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2  p-1.5  inline-flex h-8 w-8
