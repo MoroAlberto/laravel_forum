@@ -32,7 +32,7 @@ php artisan key:generate
 docker-compose up -d
 php artisan migrate
 php artisan db:seed
-npm run dev
+npm run build
 php artisan serve
 ```
 
