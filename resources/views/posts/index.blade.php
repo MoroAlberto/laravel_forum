@@ -7,6 +7,11 @@
     @if (session('success'))
         <x-alert message="{{session('success')}}" type="success"></x-alert>
     @endif
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <x-alert message="{{ $error }}" type="error"></x-alert>
+        @endforeach
+    @endif
     <div class="rounded-xl border p-2 shadow-md bg-slate-200 mt-2 mb-2">
         <div class="flex items-stretch">
             <p class="ml-1 mr-1 text">Filter by: </p>

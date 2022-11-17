@@ -20,24 +20,29 @@ class PostTableSeeder extends Seeder
     public function run(): void
     {
         PostType::create([
+            'id' => 1,
             'name' => 'Food'
         ]);
         PostType::create([
+            'id' => 2,
             'name' => 'Games'
         ]);
         User::create([
+            'id' => 1,
             'name' => 'Jack Smith',
             'email' => 'test@gmail.com',
             'password' => Hash::make('password'),
             'is_admin' => 1
         ]);
         Post::create([
+            'id' => 1,
             'title' => 'First Post',
             'content' => 'This is my first post!',
             'post_type_id' => 1,
             'user_id' => 1
         ]);
         Post::create([
+            'id' => 2,
             'title' => 'Second Post',
             'content' => 'This is my second post!',
             'post_type_id' => 2,

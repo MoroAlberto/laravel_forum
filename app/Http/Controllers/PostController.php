@@ -93,13 +93,16 @@ class PostController extends Controller
     public function edit(int $id): Factory|View|Application|RedirectResponse
     {
         $selectedPost = Post::find($id);
+        $postTypes = PostType::all();
         $currentUser = Auth::id();
         if ($selectedPost->user_id == $currentUser) {
             return view('posts.edit', [
-                'post' => $selectedPost
+                'post' => $selectedPost,
+                'types' => $postTypes
             ]);
         } else {
-            return back()->with('error', 'You do not have permission to edit this post');
+            //don't use back() because with filters give problems
+            return redirect()->route('forum.index')->with('error', 'You do not have permission to edit this post');
         }
     }
 
@@ -116,32 +119,41 @@ class PostController extends Controller
         $selectedPost = Post::find($id);
         $selectedPost->title = $request->input('title');
         $selectedPost->content = $request->input('content');
+        $selectedPost->post_type_id = $request->input('type');
         $selectedPost->save();
         return redirect()->route('forum.index')->with('success', 'Post updated successfully');
     }
 
     /**
-     * @param Post $id
+     * @param int $id
      * @return RedirectResponse
      */
-    public function destroy(Post $id): RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
-        $id->delete();
-        return redirect()->route('forum.index')->with('success', 'Post deleted successfully');
+        $selectedPost = Post::find($id);
+        $currentUser = Auth::id();
+        if ($selectedPost->user_id == $currentUser) {
+            Post::destroy($id);
+            return redirect()->route('forum.index')->with('success', 'Post deleted successfully');
+        } else {
+            //don't use back() because with filters give problems
+            return redirect()->route('forum.index')->with('error', 'You do not have permission to delete this post');
+        }
     }
 
     /**
+     * @param Request $request
      * @return View|Factory|Application
      */
-    public function filter(): View|Factory|Application
+    public function filter(Request $request): View|Factory|Application
     {
-        $filterID = request('typeFilter');
-        $filteredTypes = Post::get()->where('post_type_id', '=', $filterID);
+        $filterID = $request->input('typeFilter');
+        $filteredPosts = Post::get()->where('post_type_id', '=', $filterID);
         $filterName = PostType::select(['name'])->where('id', '=', $filterID)->get();
-        $types = PostType::all();
+        $postTypes = PostType::all();
         return view('posts.index', [
-            'posts' => $filteredTypes,
-            'types' => $types,
+            'posts' => $filteredPosts,
+            'types' => $postTypes,
             'filterName' => $filterName
         ]);
     }

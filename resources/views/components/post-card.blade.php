@@ -1,7 +1,8 @@
 <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
     <div class="flex w-full items-center justify-between border-b pb-3">
         <div class="flex items-center space-x-3">
-            <div class="h-8 w-8 rounded-full bg-slate-400 bg-[url('https://i.pravatar.cc/32')]"></div>
+            <img class="h-8 w-8 rounded-full bg-slate-400" alt="Profile pic"
+                 src="https://i.pravatar.cc/32?img={{ $post->user->id }}">
             <div class="text-lg font-bold text-slate-700">{{ $post->user->name }}</div>
         </div>
         <div class="flex items-center space-x-8">
@@ -41,13 +42,13 @@
                     <span id="like_{{$post->id}}">{{count($post->likes)}}</span>
                 </div>
                 @auth
-                    <form action="{{route('forum.edit',[$post->id])}}">
+                    <form action="{{route('forum.edit',[$post->id])}}" method="GET">
                         <button>Edit post</button>
                     </form>
 
-                    <form action="{{route('forum.destroy',[$post->id])}}" method="POST">
-                        @method('DELETE')
+                    <form action="{{ route('forum.destroy',$post->id) }}" method="POST">
                         @csrf
+                        @method('DELETE')
                         <button type="submit">Delete post</button>
                     </form>
                 @endauth

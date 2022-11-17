@@ -30,7 +30,7 @@
         <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2 bg-slate-300">
             <div class="mt-2">
                 <div class="ml-1 mr-1 mb-3 text-xl">{{$comment->comment}}</div>
-                <p class="ml-1 mr-1 text">Posted by: {{ $post->user->name}}</p>
+                <p class="ml-1 mr-1 text">Posted by: {{ $comment->user->name}}</p>
                 <div class="flex items-center transition hover:text-slate-600">
                     <svg xmlns="http://www.w3.org/2000/svg" class="mr-1.5 h-5 w-5" fill="none"
                          viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -42,18 +42,21 @@
             </div>
         </div>
     @endforeach
-
     @auth
         <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
+            <div class="mb-4">
+                <h1 class="text-3xl font-bold">
+                    Create a comment
+                </h1>
+            </div>
             <form action="/add-comment" method="POST">
-                <div class="mt-1 mb-1">
-                    <p class="mb-3 text-2xl font-bold">Create a comment</p>
-                    @csrf
-                    <input type="hidden" name="post_id" value="{{$post->id}}">
-                    <div class="ml-1 mr-1 text-1xl">
-                        <label for="comment">Comment: </label>
-                        <input type="text" name="comment" id="comment" placeholder="Please input a comment" required>
-                    </div>
+                @csrf
+                <input type="hidden" name="post_id" value="{{$post->id}}">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700" for="comment">Comment:</label>
+                    <input type="text" name="comment"
+                           class="block w-full mt-1 border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                           id="comment" placeholder="Please input a comment" required>
                 </div>
                 <div class="flex justify-between mt-4 ">
                     <x-primary-button type="submit"> {{ __('Submit comment') }}</x-primary-button>
@@ -72,5 +75,4 @@
             </x-primary-button>
         </form>
     </div>
-
 @endsection

@@ -11,7 +11,7 @@ class ValidatePostRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,12 +21,16 @@ class ValidatePostRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(): array
     {
-        return [
-            'title' => 'required|unique:posts',
+        $rules = [
+            'title' => 'required|string|unique:posts|max:255',
             'content' => 'required|string',
             'type' => 'required|integer|min:1|exists:post_types,id',
         ];
+        if (in_array($this->method(), ['PUT', 'PATCH'])) {
+            $rules['title'] = 'required|string|max:255';
+        }
+        return $rules;
     }
 }
