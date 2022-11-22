@@ -59,7 +59,7 @@ class PostController extends Controller
             'post_type_id' => $request->input('type'),
             'user_id' => Auth::id()
         ]);
-        return redirect()->route('forum.index')->with('success', 'Post created successfully');
+        return redirect()->route('forum.index')->with('success', __('message.success'));
     }
 
     /**
@@ -72,7 +72,7 @@ class PostController extends Controller
     {
         $selectedPost = Post::find($id);
         if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+            return redirect()->route('forum.index')->with('error', __('message.error'));
         }
         $selectedComments = Comment::select()->where('post_id', '=', $id)->get();
         $commentUsers = [];
@@ -97,7 +97,7 @@ class PostController extends Controller
     {
         $selectedPost = Post::find($id);
         if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+            return redirect()->route('forum.index')->with('error', __('message.error'));
         }
         $postTypes = PostType::all();
         $currentUser = Auth::id();
@@ -108,7 +108,7 @@ class PostController extends Controller
             ]);
         } else {
             //don't use back() because with filters give problems
-            return redirect()->route('forum.index')->with('error', 'You do not have permission to edit this post');
+            return redirect()->route('forum.index')->with('error', __('message.no_permission'));
         }
     }
 
@@ -124,13 +124,13 @@ class PostController extends Controller
         $request->validated();
         $selectedPost = Post::find($id);
         if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+            return redirect()->route('forum.index')->with('error', __('message.error'));
         }
         $selectedPost->title = $request->input('title');
         $selectedPost->content = $request->input('content');
         $selectedPost->post_type_id = $request->input('type');
         $selectedPost->save();
-        return redirect()->route('forum.index')->with('success', 'Post updated successfully');
+        return redirect()->route('forum.index')->with('success', __('message.success'));
     }
 
     /**
@@ -141,15 +141,15 @@ class PostController extends Controller
     {
         $selectedPost = Post::find($id);
         if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', 'This post doesn\'t exist');
+            return redirect()->route('forum.index')->with('error',);
         }
         $currentUser = Auth::id();
         if ($selectedPost->user_id == $currentUser) {
             Post::destroy($id);
-            return redirect()->route('forum.index')->with('success', 'Post deleted successfully');
+            return redirect()->route('forum.index')->with('success', __('message.delete'));
         } else {
             //don't use back() because with filters give problems
-            return redirect()->route('forum.index')->with('error', 'You do not have permission to delete this post');
+            return redirect()->route('forum.index')->with('error', __('message.no_permission'));
         }
     }
 

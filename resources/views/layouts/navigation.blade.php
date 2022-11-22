@@ -13,11 +13,11 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
-                        {{ __('Homepage') }}
+                        {{ __('message.homepage') }}
                     </x-nav-link>
                     @auth
                         <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
-                            {{ __('Create user') }}
+                            {{ __('message.create_user') }}
                         </x-nav-link>
                     @endauth
                 </div>
@@ -52,7 +52,7 @@
                                 <x-dropdown-link :href="route('logout')"
                                                  onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                    {{ __('Log Out') }}
+                                    {{ __('message.log_out') }}
                                 </x-dropdown-link>
                             </form>
                         </x-slot>
@@ -61,7 +61,7 @@
                 @guest
                     <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                         <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
-                            {{ __('Login') }}
+                            {{ __('message.login') }}
                         </x-nav-link>
                     </div>
                 @endguest
@@ -87,7 +87,7 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+                {{ __('message.dashboard') }}
             </x-responsive-nav-link>
         </div>
 
@@ -106,7 +106,7 @@
                         <x-responsive-nav-link :href="route('logout')"
                                                onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                            {{ __('Log Out') }}
+                            {{ __('message.log_out') }}
                         </x-responsive-nav-link>
                     </form>
                 </div>

@@ -39,7 +39,7 @@
             @default
                text-yellow-700
          @endswitch ">
-            {!! $message !!}
+            {{ $message }}
         </div>
         <button type="button"
                 class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2  p-1.5  inline-flex h-8 w-8
@@ -54,7 +54,7 @@
                      bg-yellow-100 dark:bg-yellow-200 text-yellow-500 focus:ring-yellow-400 hover:bg-yellow-200 dark:hover:bg-yellow-300
                  @endswitch "
                 data-dismiss-target="#alert-border-2" aria-label="Close">
-            <span class="sr-only">Dismiss</span>
+            <span class="sr-only">{{ __('message.dismiss') }}</span>
             <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
                  xmlns="http://www.w3.org/2000/svg" x-on:click="show=false">
                 <path fill-rule="evenodd"

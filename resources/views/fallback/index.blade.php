@@ -10,7 +10,7 @@
 <body>
 <main class="app-container">
     <h1>
-        Fallback, this route doesn't exist
+        {{ __('message.fallback') }}
     </h1>
 </main>
 </body>
