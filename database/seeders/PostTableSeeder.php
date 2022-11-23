@@ -64,5 +64,6 @@ class PostTableSeeder extends Seeder
             'post_id' => 1,
             'user_id' => 1
         ]);
+        Post::factory(8)->create();
     }
 }

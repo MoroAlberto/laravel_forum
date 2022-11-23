@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,11 +20,11 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->title(),
-            'content' => fake()->unique()->safeEmail(),
+            'title' => fake()->unique()->sentence(),
+            'content' => fake()->realText(),
             'created_at' => now(),
-            'post_type_id' => 1,
-            'user_id' => 1
+            'post_type_id' => rand(1,2),
+            'user_id' => User::factory()
         ];
     }
 }
