@@ -13,18 +13,29 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
+    /**
+     * Create the controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        if (Auth::check()) {
+            $this->authorizeResource(Post::class, 'post');
+        }
+    }
 
     /**
      * @return Factory|View|Application
      */
     public function index(): Factory|View|Application
     {
-        $posts = Post::all();
+        $posts = Post::orderBy('updated_at', 'desc')->paginate(4);
         $postTypes = PostType::all();
         session()->forget('currentFilter');
         return view('posts.index', [
@@ -56,32 +67,29 @@ class PostController extends Controller
         Post::create([
             'title' => $request->input('title'),
             'content' => $request->input('content'),
-            'post_type_id' => $request->input('type'),
+            'post_type_id' => $request->input('post_type_id'),
             'user_id' => Auth::id()
         ]);
         return redirect()->route('forum.index')->with('success', __('message.success'));
     }
 
+
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param Post $post
      * @return Application|Factory|View|RedirectResponse
      */
-    public function show(int $id)
+    public function show(Post $post): View|Factory|RedirectResponse|Application
     {
-        $selectedPost = Post::find($id);
-        if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', __('message.error'));
-        }
-        $selectedComments = Comment::select()->where('post_id', '=', $id)->get();
+        $selectedComments = Comment::select()->where('post_id', '=', $post->id)->get();
         $commentUsers = [];
         foreach ($selectedComments as $comment) {
             $commentUsers[] = User::select('name')->where('id', '=', $comment->user_id)->get();
         }
         return view('posts.show',
             [
-                'post' => $selectedPost,
+                'post' => $post,
                 'comments' => $selectedComments,
                 'users' => $commentUsers
             ]);
@@ -90,20 +98,16 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param Post $post
      * @return Factory|View|Application|RedirectResponse
      */
-    public function edit(int $id): Factory|View|Application|RedirectResponse
+    public function edit(Post $post): Factory|View|Application|RedirectResponse
     {
-        $selectedPost = Post::find($id);
-        if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', __('message.error'));
-        }
         $postTypes = PostType::all();
         $currentUser = Auth::id();
-        if ($selectedPost->user_id == $currentUser) {
+        if ($post->user_id == $currentUser) {
             return view('posts.edit', [
-                'post' => $selectedPost,
+                'post' => $post,
                 'types' => $postTypes
             ]);
         } else {
@@ -116,41 +120,26 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param ValidatePostRequest $request
-     * @param int $id
+     * @param Post $post
      * @return RedirectResponse
      */
-    public function update(ValidatePostRequest $request, int $id): RedirectResponse
+    public function update(ValidatePostRequest $request, Post $post): RedirectResponse
     {
         $request->validated();
-        $selectedPost = Post::find($id);
-        if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error', __('message.error'));
-        }
-        $selectedPost->title = $request->input('title');
-        $selectedPost->content = $request->input('content');
-        $selectedPost->post_type_id = $request->input('type');
-        $selectedPost->save();
-        return redirect()->route('forum.index')->with('success', __('message.success'));
+        Post::where('id', $post->id)->update($request->except(['_token', '_method']));
+        return redirect()->route('forum.index')->with('success', __('message.success_update'));
     }
 
     /**
-     * @param int $id
+     * Remove the specified resource from storage.
+     *
+     * @param Post $post
      * @return RedirectResponse
      */
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Post $post): RedirectResponse
     {
-        $selectedPost = Post::find($id);
-        if (is_null($selectedPost)) {
-            return redirect()->route('forum.index')->with('error',);
-        }
-        $currentUser = Auth::id();
-        if ($selectedPost->user_id == $currentUser) {
-            Post::destroy($id);
-            return redirect()->route('forum.index')->with('success', __('message.delete'));
-        } else {
-            //don't use back() because with filters give problems
-            return redirect()->route('forum.index')->with('error', __('message.no_permission'));
-        }
+        Post::destroy($post->id);
+        return redirect()->route('forum.index')->with('success', __('message.delete'));
     }
 
     /**

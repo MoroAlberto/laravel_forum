@@ -26,7 +26,7 @@ class ValidatePostRequest extends FormRequest
         $rules = [
             'title' => 'required|string|unique:posts|max:255',
             'content' => 'required|string',
-            'type' => 'required|integer|min:1|exists:post_types,id',
+            'post_type_id' => 'required|integer|min:1|exists:post_types,id',
         ];
         if (in_array($this->method(), ['PUT', 'PATCH'])) {
             $rules['title'] = 'required|string|max:255';

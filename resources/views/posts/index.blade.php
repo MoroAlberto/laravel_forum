@@ -55,4 +55,7 @@
             </form>
         @endif
     </div>
+    <div class="mx-auto pb-10">
+{{--        {{$posts->links()}}--}}
+    </div>
 @endsection

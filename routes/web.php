@@ -15,13 +15,16 @@ use App\Http\Controllers\PostController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+require __DIR__ . '/auth.php';
+
 Route::get('/', function () {
     return redirect()->route('forum.index');
 });
 Route::prefix('/forum')->group(function () {
-    Route::get('/', [PostController::class, 'index'])->name('forum.index');
-    Route::get('/{id}', [PostController::class, 'show'])
-        ->where('id', '[0-9]+')
+    Route::get('/', [PostController::class, 'index'])
+        ->name('forum.index');
+    Route::get('/{post}', [PostController::class, 'show'])
+        ->where('post', '[0-9]+')
         ->name('forum.show');
 });
 Route::post('/filter', [PostController::class, 'filter']);
@@ -35,20 +38,20 @@ Route::middleware([
             ->name('forum.create');
         Route::post('/', [PostController::class, 'store'])
             ->name('forum.store');
-        Route::get('/edit/{id}', [PostController::class, 'edit'])
-            ->where('id', '[0-9]+')
+        Route::get('/edit/{post}', [PostController::class, 'edit'])
+            ->where('post', '[0-9]+')
             ->name('forum.edit');
-        Route::patch('/{id}', [PostController::class, 'update'])
-            ->where('id', '[0-9]+')
+        Route::patch('/{post}', [PostController::class, 'update'])
+            ->where('post', '[0-9]+')
             ->name('forum.update');
-        Route::delete('/{id}', [PostController::class, 'destroy'])
-            ->where('id', '[0-9]+')
+        Route::delete('/{post}', [PostController::class, 'destroy'])
+            ->where('post', '[0-9]+')
             ->name('forum.destroy');
     });
     Route::post('/add-comment', [CommentController::class, 'store']);
     Route::post('/like', [PostController::class, 'like']);
 });
 
-require __DIR__ . '/auth.php';
+
 
 
