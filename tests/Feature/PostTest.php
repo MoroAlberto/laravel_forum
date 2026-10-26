@@ -180,4 +180,19 @@ class PostTest extends TestCase
 
         $this->assertDatabaseHas('comments', ['comment' => 'Nice!', 'post_id' => 2, 'user_id' => 1]);
     }
+
+    public function test_comments_are_rate_limited(): void
+    {
+        $user = User::find(1);
+
+        for ($i = 0; $i < 10; $i++) {
+            $this->actingAs($user)->post('/add-comment', ['comment' => "Comment $i", 'post_id' => 2])
+                ->assertRedirect();
+        }
+
+        $this->actingAs($user)->post('/add-comment', ['comment' => 'Spam', 'post_id' => 2])
+            ->assertTooManyRequests();
+
+        $this->assertDatabaseMissing('comments', ['comment' => 'Spam']);
+    }
 }

@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [PostController::class, 'create'])
             ->name('forum.create');
         Route::post('/', [PostController::class, 'store'])
+            ->middleware('throttle:posts')
             ->name('forum.store');
         Route::get('/edit/{post}', [PostController::class, 'edit'])
             ->whereNumber('post')
@@ -37,8 +38,10 @@ Route::middleware('auth')->group(function () {
             ->name('forum.destroy');
     });
     Route::post('/add-comment', [CommentController::class, 'store'])
+        ->middleware('throttle:comments')
         ->name('comments.store');
     Route::post('/like', [PostController::class, 'like'])
+        ->middleware('throttle:likes')
         ->name('posts.like');
 });
 
