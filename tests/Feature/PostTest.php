@@ -195,4 +195,13 @@ class PostTest extends TestCase
 
         $this->assertDatabaseMissing('comments', ['comment' => 'Spam']);
     }
+
+    public function test_like_response_is_translated(): void
+    {
+        $this->actingAs(User::find(1))
+            ->withSession(['locale' => 'it'])
+            ->postJson('/like', ['post_id' => 1])
+            ->assertOk()
+            ->assertJson(['text' => 'Hai già messo like a questo post']);
+    }
 }

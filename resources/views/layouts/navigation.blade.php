@@ -26,6 +26,7 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ml-6">
+                <x-locale-switcher class="mr-4"/>
                 @auth
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -99,6 +100,9 @@
 
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200">
+            <div class="px-4 pb-3">
+                <x-locale-switcher/>
+            </div>
             @auth
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800">{{ Auth::user()->name }}</div>

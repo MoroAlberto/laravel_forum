@@ -2,12 +2,16 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FallbackController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
 Route::redirect('/', '/forum');
+
+Route::post('/locale', LocaleController::class)
+    ->name('locale.update');
 
 Route::prefix('/forum')->group(function () {
     Route::get('/', [PostController::class, 'index'])
