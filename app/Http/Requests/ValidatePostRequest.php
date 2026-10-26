@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Post;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,7 +13,12 @@ class ValidatePostRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        // runs before validation, so non-owners get a 403 instead of validation errors
+        $post = $this->route('post');
+
+        return $post
+            ? $this->user()->can('update', $post)
+            : $this->user()->can('create', Post::class);
     }
 
     /**

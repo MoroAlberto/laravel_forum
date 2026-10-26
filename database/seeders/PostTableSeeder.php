@@ -61,6 +61,7 @@ class PostTableSeeder extends Seeder
             'post_id' => 1,
             'user_id' => 1,
         ]);
-        Post::factory(8)->create();
+        // reuse the seeded types instead of creating a new one per post
+        Post::factory(8)->recycle(PostType::all())->create();
     }
 }

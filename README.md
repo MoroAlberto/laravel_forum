@@ -13,10 +13,10 @@ Based on:
 
 ## Technical Requirements
 
-- PHP 8.5 or higher
-- Composer 2
-- Docker
-- Node.js 20.19+ or 22.12+ with npm
+- Docker with Docker Compose
+
+PHP 8.5, Composer, Node.js and MySQL all run inside the containers provided by
+[Laravel Sail](https://laravel.com/docs/sail), so nothing else is needed on the host.
 
 ## Installation
 
@@ -25,18 +25,30 @@ You can install this program by executing the following commands:
 ```bash
 git clone https://github.com/MoroAlberto/laravel_forum.git
 cd laravel_forum
-composer install
-npm install
 cp .env.example .env
-php artisan key:generate
-docker compose up -d
-php artisan migrate
-php artisan db:seed
-npm run build
-php artisan serve
+
+# install the PHP dependencies (this also installs Sail)
+docker run --rm -u "$(id -u):$(id -g)" -v "$(pwd):/app" -w /app \
+    composer:2 composer install --ignore-platform-reqs
+
+./vendor/bin/sail up -d
+./vendor/bin/sail artisan key:generate
+./vendor/bin/sail artisan migrate --seed
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run build
 ```
 
-After this, go to [localhost](http://127.0.0.1:8000/) to update your forum.
+After this, go to [localhost:8080](http://localhost:8080/) to use your forum.
+
+The ports can be changed in `.env`:
+
+| Variable          | Default | Used for                     |
+|-------------------|---------|------------------------------|
+| `APP_PORT`        | 8080    | web application              |
+| `VITE_PORT`       | 5174    | Vite dev server (`npm run dev`) |
+| `FORWARD_DB_PORT` | 3307    | MySQL, reachable from the host |
+
+To stop the containers run `./vendor/bin/sail down`.
 
 By default I create a user:
 ```bash
@@ -47,10 +59,11 @@ but the forum is also accessible by those who do not have a login.
 
 ## Tests
 
-Tests run on an in-memory SQLite database, so no running MySQL is needed:
+Tests run on a separate `testing` MySQL database, created automatically by Sail,
+so the containers must be running:
 
 ```bash
-php artisan test
+./vendor/bin/sail test
 ```
 
 ## Screenshot

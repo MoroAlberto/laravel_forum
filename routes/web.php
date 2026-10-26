@@ -16,7 +16,8 @@ Route::prefix('/forum')->group(function () {
         ->whereNumber('post')
         ->name('forum.show');
 });
-Route::post('/filter', [PostController::class, 'filter'])
+// GET is needed for the pagination links of the filtered list
+Route::match(['get', 'post'], '/filter', [PostController::class, 'filter'])
     ->name('forum.filter');
 
 Route::middleware('auth')->group(function () {

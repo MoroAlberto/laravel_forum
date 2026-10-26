@@ -92,6 +92,41 @@ class PostTest extends TestCase
         $this->assertDatabaseHas('posts', ['id' => 1, 'title' => 'First Post']);
     }
 
+    public function test_other_users_get_forbidden_before_validation(): void
+    {
+        $intruder = User::factory()->create();
+
+        // invalid data must not leak validation errors (e.g. "title taken") to non-owners
+        $this->actingAs($intruder)->patch('/forum/1', [
+            'title' => 'Second Post',
+            'content' => '',
+        ])->assertForbidden();
+    }
+
+    public function test_filter_rejects_invalid_type(): void
+    {
+        $this->post('/filter', ['typeFilter' => [1, 2]])
+            ->assertSessionHasErrors('typeFilter');
+
+        $this->post('/filter', ['typeFilter' => 999])
+            ->assertSessionHasErrors('typeFilter');
+    }
+
+    public function test_filter_is_paginated(): void
+    {
+        Post::factory(5)->create(['post_type_id' => 1]);
+
+        $this->post('/filter', ['typeFilter' => 1])
+            ->assertOk()
+            ->assertSee('typeFilter=1&amp;page=2', false);
+
+        $this->get('/filter?typeFilter=1&page=2')
+            ->assertOk()
+            ->assertViewHas('posts', fn ($posts) => $posts->currentPage() === 2
+                && $posts->isNotEmpty()
+                && $posts->every(fn ($post) => $post->post_type_id === 1));
+    }
+
     public function test_owner_can_delete_post(): void
     {
         $this->actingAs(User::find(1))->delete('/forum/1')
@@ -114,6 +149,17 @@ class PostTest extends TestCase
             ->assertJson(['success' => false]);
 
         $this->assertSame(1, $post->likes()->count());
+    }
+
+    public function test_like_on_existing_row_does_not_fail(): void
+    {
+        // simulates the second of two concurrent requests: the row is already there
+        // when the insert runs, so the unique index must not turn into a 500
+        $this->actingAs(User::find(1))->postJson('/like', ['post_id' => 1])
+            ->assertOk()
+            ->assertJson(['message' => 'already_liked', 'success' => false]);
+
+        $this->assertSame(1, Post::find(1)->likes()->count());
     }
 
     public function test_user_can_comment_post(): void

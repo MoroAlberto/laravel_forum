@@ -23,7 +23,7 @@ class PostFactory extends Factory
             'title' => fake()->unique()->sentence(),
             'content' => fake()->realText(),
             'created_at' => now(),
-            'post_type_id' => PostType::inRandomOrder()->value('id') ?? PostType::factory(),
+            'post_type_id' => PostType::factory(),
             'user_id' => User::factory(),
         ];
     }

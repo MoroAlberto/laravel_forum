@@ -32,8 +32,6 @@ class PostController extends Controller
      */
     public function create(): View
     {
-        Gate::authorize('create', Post::class);
-
         return view('posts.create', [
             'types' => PostType::all(),
         ]);
@@ -41,8 +39,6 @@ class PostController extends Controller
 
     public function store(ValidatePostRequest $request): RedirectResponse
     {
-        Gate::authorize('create', Post::class);
-
         $request->user()->posts()->create($request->validated());
 
         return redirect()->route('forum.index')->with('success', __('message.success'));
@@ -80,8 +76,6 @@ class PostController extends Controller
      */
     public function update(ValidatePostRequest $request, Post $post): RedirectResponse
     {
-        Gate::authorize('update', $post);
-
         $post->update($request->validated());
 
         return redirect()->route('forum.index')->with('success', __('message.success_update'));
@@ -101,14 +95,19 @@ class PostController extends Controller
 
     public function filter(Request $request): View
     {
-        $filterType = PostType::findOrFail($request->input('typeFilter'));
+        $validated = $request->validate([
+            'typeFilter' => 'required|integer|exists:post_types,id',
+        ]);
+
+        $filterType = PostType::findOrFail($validated['typeFilter']);
 
         return view('posts.index', [
             'posts' => $filterType->posts()
                 ->with(['user', 'postType'])
                 ->withCount(['comments', 'likes'])
                 ->orderBy('updated_at', 'desc')
-                ->get(),
+                ->paginate(4)
+                ->appends(['typeFilter' => $filterType->id]),
             'types' => PostType::all(),
             'filterName' => $filterType->name,
         ]);
@@ -123,7 +122,7 @@ class PostController extends Controller
             'post_id' => 'required|integer|exists:posts,id',
         ]);
 
-        $like = Like::firstOrCreate([
+        $like = Like::createOrFirst([
             'post_id' => $request->input('post_id'),
             'user_id' => Auth::id(),
         ]);
