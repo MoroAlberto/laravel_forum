@@ -88,4 +88,4 @@ Tests run on a separate `testing` MySQL database created by Sail, so the contain
 
 ## License
 
-Released under the [MIT license](https://opensource.org/licenses/MIT).
+Released under the [MIT license](LICENSE): feel free to copy and reuse it.
