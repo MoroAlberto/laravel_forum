@@ -3,7 +3,9 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -60,5 +62,19 @@ class RegistrationTest extends TestCase
         $this->assertDatabaseHas('users', ['email' => 'test@example.com', 'is_admin' => false]);
         $this->assertAuthenticatedAs($admin);
         $response->assertRedirect(route('forum.index', absolute: false));
+    }
+
+    public function test_created_user_receives_verification_email()
+    {
+        Notification::fake();
+
+        $this->actingAs(User::factory()->admin()->create())->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        Notification::assertSentTo(User::firstWhere('email', 'test@example.com'), VerifyEmail::class);
     }
 }

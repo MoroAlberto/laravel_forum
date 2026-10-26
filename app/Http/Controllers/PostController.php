@@ -6,6 +6,8 @@ use App\Http\Requests\ValidatePostRequest;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostType;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -37,9 +39,9 @@ class PostController extends Controller
         ]);
     }
 
-    public function store(ValidatePostRequest $request): RedirectResponse
+    public function store(ValidatePostRequest $request, #[CurrentUser] User $user): RedirectResponse
     {
-        $request->user()->posts()->create($request->validated());
+        $user->posts()->create($request->validated());
 
         return redirect()->route('forum.index')->with('success', __('message.success'));
     }
@@ -95,11 +97,11 @@ class PostController extends Controller
 
     public function filter(Request $request): View
     {
-        $validated = $request->validate([
+        $request->validate([
             'typeFilter' => 'required|integer',
         ]);
 
-        $filterType = PostType::findOrFail($validated['typeFilter']);
+        $filterType = PostType::findOrFail($request->integer('typeFilter'));
 
         return view('posts.index', [
             'posts' => $filterType->posts()

@@ -14,11 +14,16 @@ class ValidatePostRequest extends FormRequest
     public function authorize(): bool
     {
         // runs before validation, so non-owners get a 403 instead of validation errors
+        $user = $this->user();
         $post = $this->route('post');
 
+        if ($user === null) {
+            return false;
+        }
+
         return $post
-            ? $this->user()->can('update', $post)
-            : $this->user()->can('create', Post::class);
+            ? $user->can('update', $post)
+            : $user->can('create', Post::class);
     }
 
     /**

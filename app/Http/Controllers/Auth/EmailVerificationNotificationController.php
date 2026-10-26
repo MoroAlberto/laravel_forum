@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class EmailVerificationNotificationController extends Controller
 {
@@ -13,13 +14,13 @@ class EmailVerificationNotificationController extends Controller
      *
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(#[CurrentUser] User $user)
     {
-        if ($request->user()->hasVerifiedEmail()) {
+        if ($user->hasVerifiedEmail()) {
             return redirect()->intended(route('forum.index', absolute: false));
         }
 
-        $request->user()->sendEmailVerificationNotification();
+        $user->sendEmailVerificationNotification();
 
         return back()->with('status', 'verification-link-sent');
     }
