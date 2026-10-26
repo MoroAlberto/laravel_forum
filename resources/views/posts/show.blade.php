@@ -11,7 +11,7 @@
 
     <article class="mt-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
         <a href="{{ route('forum.filter', ['typeFilter' => $post->postType->id]) }}"
-           class="inline-block rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100">
+           class="inline-block rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset transition hover:opacity-80 {{ $post->postType->badgeClasses() }}">
             {{ $post->postType->name }}
         </a>
         <h1 class="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">{{ $post->title }}</h1>
@@ -23,7 +23,10 @@
                 <span class="text-slate-500">· {{ $post->created_at->diffForHumans() }}</span>
             </div>
         </div>
-        <div class="mt-6 whitespace-pre-line leading-relaxed text-slate-700">{{ $post->content }}</div>
+        <div class="mt-6 whitespace-pre-line text-lg leading-relaxed text-slate-700">{{ $post->content }}</div>
+        <div class="mt-8 flex items-center border-t border-slate-100 pt-4 text-sm text-slate-500">
+            <x-like-button :post="$post"/>
+        </div>
     </article>
 
     <section class="mt-10">

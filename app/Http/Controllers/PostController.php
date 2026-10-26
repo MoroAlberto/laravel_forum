@@ -18,14 +18,13 @@ class PostController extends Controller
 {
     public function index(): View
     {
-        $posts = Post::with(['user', 'postType'])
-            ->withCount(['comments', 'likes'])
+        $posts = Post::withCardData()
             ->orderBy('updated_at', 'desc')
             ->paginate(4);
 
         return view('posts.index', [
             'posts' => $posts,
-            'types' => PostType::all(),
+            'types' => PostType::withCount('posts')->get(),
         ]);
     }
 
@@ -51,6 +50,12 @@ class PostController extends Controller
      */
     public function show(Post $post): View
     {
+        $post->loadCount('likes');
+
+        if (Auth::check()) {
+            $post->loadExists(['likes as liked' => fn ($likes) => $likes->whereKey(Auth::id())]);
+        }
+
         return view('posts.show', [
             'post' => $post,
             'comments' => $post->comments()->with('user')->get(),
@@ -105,12 +110,11 @@ class PostController extends Controller
 
         return view('posts.index', [
             'posts' => $filterType->posts()
-                ->with(['user', 'postType'])
-                ->withCount(['comments', 'likes'])
+                ->withCardData()
                 ->orderBy('updated_at', 'desc')
                 ->paginate(4)
                 ->appends(['typeFilter' => $filterType->id]),
-            'types' => PostType::all(),
+            'types' => PostType::withCount('posts')->get(),
             'filterName' => $filterType->name,
         ]);
     }

@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
 {
@@ -20,6 +23,22 @@ class Post extends Model
         'title',
         'content',
     ];
+
+    /**
+     * Load what the post card shows: author, type, counters and whether the current user liked it.
+     *
+     * @param  Builder<Post>  $query
+     */
+    #[Scope]
+    protected function withCardData(Builder $query): void
+    {
+        $query->with(['user', 'postType'])
+            ->withCount(['comments', 'likes']);
+
+        if (Auth::check()) {
+            $query->withExists(['likes as liked' => fn (Builder $likes) => $likes->whereKey(Auth::id())]);
+        }
+    }
 
     /**
      * @return HasMany<Comment, $this>

@@ -204,4 +204,16 @@ class PostTest extends TestCase
             ->assertOk()
             ->assertJson(['text' => 'Hai già messo like a questo post']);
     }
+
+    public function test_posts_liked_by_the_user_are_highlighted(): void
+    {
+        // the seeder adds a like of user 1 on post 1
+        $this->actingAs(User::find(1))->get('/forum/1')
+            ->assertOk()
+            ->assertSee('aria-pressed="true"', false);
+
+        $this->actingAs(User::factory()->create())->get('/forum/1')
+            ->assertOk()
+            ->assertDontSee('aria-pressed="true"', false);
+    }
 }

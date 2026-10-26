@@ -9,7 +9,7 @@
             </div>
         </div>
         <a href="{{ route('forum.filter', ['typeFilter' => $post->postType->id]) }}"
-           class="shrink-0 rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100">
+           class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset transition hover:opacity-80 {{ $post->postType->badgeClasses() }}">
             {{ $post->postType->name }}
         </a>
     </div>
@@ -30,27 +30,7 @@
                 </svg>
                 <span>{{ $post->comments_count }}</span>
             </a>
-            @guest
-                <a href="{{ route('login') }}" class="flex items-center gap-1.5 transition hover:text-indigo-600"
-                   title="{{ __('message.like') }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                    </svg>
-                    <span>{{ $post->likes_count }}</span>
-                </a>
-            @else
-                <button type="button" x-data x-on:click="addLike({{ $post->id }})" data-like
-                        class="flex items-center gap-1.5 transition hover:text-indigo-600" title="{{ __('message.like') }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                    </svg>
-                    <span id="like_{{ $post->id }}">{{ $post->likes_count }}</span>
-                </button>
-            @endguest
+            <x-like-button :post="$post"/>
         </div>
         <div class="flex items-center gap-3 text-xs font-semibold">
             @can('update', $post)

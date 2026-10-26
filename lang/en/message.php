@@ -52,4 +52,9 @@ return [
     'like_added' => 'Thanks for your like!',
     'already_liked' => 'You already liked this post',
     'generic_error' => 'Something went wrong, please try again.',
+
+    // sidebar
+    'topics' => 'Topics',
+    'about_title' => 'Welcome to :name',
+    'about_text' => 'A small community to share ideas, ask questions and chat about the things you love. Be kind!',
 ];

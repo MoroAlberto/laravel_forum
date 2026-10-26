@@ -32,7 +32,7 @@
         @endauth
     </div>
 
-    <nav class="mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="{{ __('message.filter_by_type') }}">
+    <nav class="mt-6 flex gap-2 overflow-x-auto pb-1 lg:hidden" aria-label="{{ __('message.filter_by_type') }}">
         <a href="{{ route('forum.index') }}"
            @class([
                'shrink-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition',
@@ -65,4 +65,44 @@
             {{ $posts->links() }}
         @endif
     </div>
+@endsection
+
+@section('sidebar')
+    <section class="rounded-xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+        <h2 class="text-sm font-bold uppercase tracking-wide text-slate-500">{{ __('message.topics') }}</h2>
+        <ul class="mt-3 space-y-1">
+            <li>
+                <a href="{{ route('forum.index') }}"
+                   @class([
+                       'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition',
+                       'bg-slate-100 text-slate-900' => ! isset($filterName),
+                       'text-slate-600 hover:bg-slate-50' => isset($filterName),
+                   ])>
+                    {{ __('message.all') }}
+                    <span class="text-xs font-medium text-slate-400">{{ $types->sum('posts_count') }}</span>
+                </a>
+            </li>
+            @foreach ($types as $type)
+                <li>
+                    <a href="{{ route('forum.filter', ['typeFilter' => $type->id]) }}"
+                       @class([
+                           'flex items-center justify-between rounded-lg px-3 py-2 text-sm font-semibold transition',
+                           'bg-slate-100 text-slate-900' => ($filterName ?? null) === $type->name,
+                           'text-slate-600 hover:bg-slate-50' => ($filterName ?? null) !== $type->name,
+                       ])>
+                        <span class="flex items-center gap-2">
+                            <span class="h-2.5 w-2.5 rounded-full {{ $type->dotClasses() }}"></span>
+                            {{ $type->name }}
+                        </span>
+                        <span class="text-xs font-medium text-slate-400">{{ $type->posts_count }}</span>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </section>
+
+    <section class="rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 p-5 text-white shadow-sm">
+        <h2 class="font-bold">{{ __('message.about_title', ['name' => config('app.name')]) }}</h2>
+        <p class="mt-2 text-sm leading-relaxed text-indigo-100">{{ __('message.about_text') }}</p>
+    </section>
 @endsection

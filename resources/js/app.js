@@ -18,7 +18,9 @@ window.addLike = async function (postId) {
         if (data.success) {
             const element = document.getElementById('like_' + postId);
             element.textContent = parseInt(element.textContent, 10) + 1;
-            element.closest('[data-like]')?.classList.add('text-indigo-600');
+            const button = element.closest('[data-like]');
+            button?.classList.add('text-indigo-600');
+            button?.querySelector('svg')?.setAttribute('fill', 'currentColor');
         } else {
             window.notify(data.text, 'warning');
         }
