@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class FallbackController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): Response
     {
-        return view('fallback.index');
+        return response()->view('fallback.index', status: 404);
     }
 }

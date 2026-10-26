@@ -3,9 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class RegistrationTest extends TestCase
@@ -37,6 +35,6 @@ class RegistrationTest extends TestCase
             'password_confirmation' => 'password',
         ]);
         $this->assertAuthenticated();
-        $response->assertRedirect(RouteServiceProvider::HOME);
+        $response->assertRedirect(route('forum.index', absolute: false));
     }
 }
