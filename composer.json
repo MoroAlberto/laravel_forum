@@ -17,7 +17,6 @@
     "require": {
         "php": "^8.5",
         "laravel/framework": "^13.38",
-        "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0"
     },
     "require-dev": {
