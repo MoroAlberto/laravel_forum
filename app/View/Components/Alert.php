@@ -16,19 +16,10 @@ class Alert extends Component
      *
      * @return void
      */
-    public function __construct(?string $message = null, ?string $type = 'error')
+    public function __construct(?string $message = null, string $type = 'error')
     {
         $this->message = $message;
         $this->type = $type;
-    }
-
-    public function backgroundColorClass(): string
-    {
-        return [
-            'error' => 'red',
-            'success' => 'blue',
-            'warning' => 'yellow',
-        ][$this->type];
     }
 
     /**

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Container\Attributes\CurrentUser;
 
 class EmailVerificationPromptController extends Controller
 {
@@ -12,9 +13,9 @@ class EmailVerificationPromptController extends Controller
      *
      * @return mixed
      */
-    public function __invoke(Request $request)
+    public function __invoke(#[CurrentUser] User $user)
     {
-        return $request->user()->hasVerifiedEmail()
+        return $user->hasVerifiedEmail()
                     ? redirect()->intended(route('forum.index', absolute: false))
                     : view('auth.verify-email');
     }

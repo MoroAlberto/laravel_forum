@@ -13,7 +13,7 @@ window.addLike = async function (postId) {
         if (data.success) {
             const element = document.getElementById('like_' + postId);
             element.textContent = parseInt(element.textContent, 10) + 1;
-            element.classList.add('bg-blue-100');
+            element.closest('[data-like]')?.classList.add('text-indigo-600');
         } else {
             alert('You already liked this post');
         }

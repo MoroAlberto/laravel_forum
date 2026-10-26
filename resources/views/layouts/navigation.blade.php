@@ -5,21 +5,22 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('forum.index') }}">
-                        <x-application-logo class="block h-10 w-auto fill-current text-gray-600"/>
+                    <a href="{{ route('forum.index') }}" class="flex items-center gap-2">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-600"/>
+                        <span class="text-lg font-extrabold tracking-tight text-slate-900">{{ config('app.name', 'Laravel') }}</span>
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('forum.index')" :active="request()->routeIs('forum.index')">
                         {{ __('message.homepage') }}
                     </x-nav-link>
-                    @auth
+                    @can('create', App\Models\User::class)
                         <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
                             {{ __('message.create_user') }}
                         </x-nav-link>
-                    @endauth
+                    @endcan
                 </div>
             </div>
 
@@ -86,9 +87,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('forum.index')" :active="request()->routeIs('forum.index')">
                 {{ __('message.dashboard') }}
             </x-responsive-nav-link>
+            @can('create', App\Models\User::class)
+                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                    {{ __('message.create_user') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
@@ -111,6 +117,13 @@
                     </form>
                 </div>
             @endauth
+            @guest
+                <div class="space-y-1">
+                    <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                        {{ __('message.login') }}
+                    </x-responsive-nav-link>
+                </div>
+            @endguest
         </div>
 
     </div>

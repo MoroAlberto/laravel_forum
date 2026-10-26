@@ -7,26 +7,22 @@
     <link rel="icon" href="{{ url('favicon.ico') }}">
     <title>{{ config('app.name', 'Laravel') }}</title>
     <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700;800&display=swap">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased">
-<div class="min-h-screen bg-gray-100">
+<body class="font-sans antialiased text-slate-800">
+<div class="min-h-screen bg-slate-100">
     @include('layouts.navigation')
-    <!-- Page Heading -->
-    @if (isset($header))
-        <header class="bg-white shadow-sm">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                {{ $header }}
-            </div>
-        </header>
-    @endif
     <!-- Page Content -->
-    <main>
-        <div class='items-center justify-center min-h-screen w-7/12 m-auto '>
+    <main class="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+        @if (session('error'))
+            <x-alert message="{{ session('error') }}" type="error"></x-alert>
+        @endif
+        @if (session('success'))
+            <x-alert message="{{ session('success') }}" type="success"></x-alert>
+        @endif
         @yield('slot')
-        </div>
     </main>
 </div>
 </body>

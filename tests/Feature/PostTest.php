@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Like;
 use App\Models\Post;
 use App\Models\PostType;
 use App\Models\User;
@@ -20,7 +21,7 @@ class PostTest extends TestCase
         $this->seed(PostTableSeeder::class);
     }
 
-    public function test_register_page_is_available_to_logged_in_users(): void
+    public function test_register_page_is_available_to_admins(): void
     {
         $response = $this->actingAs(User::find(1))->get('/register');
 
@@ -109,7 +110,7 @@ class PostTest extends TestCase
             ->assertSessionHasErrors('typeFilter');
 
         $this->post('/filter', ['typeFilter' => 999])
-            ->assertSessionHasErrors('typeFilter');
+            ->assertNotFound();
     }
 
     public function test_filter_is_paginated(): void
@@ -149,6 +150,14 @@ class PostTest extends TestCase
             ->assertJson(['success' => false]);
 
         $this->assertSame(1, $post->likes()->count());
+    }
+
+    public function test_dislikes_are_not_counted_as_likes(): void
+    {
+        Like::create(['post_id' => 2, 'user_id' => 1, 'is_dislike' => 1]);
+
+        $this->assertSame(0, Post::find(2)->likes()->count());
+        $this->assertSame(0, Post::withCount('likes')->find(2)->likes_count);
     }
 
     public function test_like_on_existing_row_does_not_fail(): void
