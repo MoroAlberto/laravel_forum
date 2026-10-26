@@ -22,7 +22,7 @@
     <div class="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-sm text-slate-500">
         <div class="flex items-center gap-5">
             <a href="{{ route('forum.show', $post->id) }}"
-               class="flex items-center gap-1.5 transition hover:text-indigo-600" title="Comments">
+               class="flex items-center gap-1.5 transition hover:text-indigo-600" title="{{ __('message.comments') }}">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -30,26 +30,38 @@
                 </svg>
                 <span>{{ $post->comments_count }}</span>
             </a>
-            <button type="button" x-data x-on:click="addLike({{ $post->id }})" data-like
-                    class="flex items-center gap-1.5 transition hover:text-indigo-600" title="Like">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                          d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
-                </svg>
-                <span id="like_{{ $post->id }}">{{ $post->likes_count }}</span>
-            </button>
+            @guest
+                <a href="{{ route('login') }}" class="flex items-center gap-1.5 transition hover:text-indigo-600"
+                   title="{{ __('message.like') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                    </svg>
+                    <span>{{ $post->likes_count }}</span>
+                </a>
+            @else
+                <button type="button" x-data x-on:click="addLike({{ $post->id }})" data-like
+                        class="flex items-center gap-1.5 transition hover:text-indigo-600" title="{{ __('message.like') }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                    </svg>
+                    <span id="like_{{ $post->id }}">{{ $post->likes_count }}</span>
+                </button>
+            @endguest
         </div>
         <div class="flex items-center gap-3 text-xs font-semibold">
             @can('update', $post)
-                <a href="{{ route('forum.edit', [$post->id]) }}" class="transition hover:text-indigo-600">Edit</a>
+                <a href="{{ route('forum.edit', [$post->id]) }}" class="transition hover:text-indigo-600">{{ __('message.edit') }}</a>
             @endcan
             @can('delete', $post)
                 <form action="{{ route('forum.destroy', $post->id) }}" method="POST"
-                      onsubmit="return confirm('Delete this post?');">
+                      onsubmit="return confirm(@js(__('message.confirm_delete')));">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="transition hover:text-red-600">Delete</button>
+                    <button type="submit" class="transition hover:text-red-600">{{ __('message.delete_action') }}</button>
                 </form>
             @endcan
         </div>

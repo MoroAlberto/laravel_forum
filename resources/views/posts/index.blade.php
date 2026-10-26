@@ -10,14 +10,14 @@
     <div class="mt-2 flex items-center justify-between gap-4">
         <div>
             <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">
-                {{ $filterName ?? 'Latest discussions' }}
+                {{ $filterName ?? __('message.latest_discussions') }}
             </h1>
             <p class="mt-1 text-sm text-slate-500">
                 @guest
-                    <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">Log in</a>
-                    to start a discussion.
+                    <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">{{ __('message.log_in') }}</a>
+                    {{ __('message.to_start_discussion') }}
                 @else
-                    Share something with the community.
+                    {{ __('message.share_something') }}
                 @endguest
             </p>
         </div>
@@ -27,18 +27,18 @@
                 <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                 </svg>
-                New post
+                {{ __('message.new_post') }}
             </a>
         @endauth
     </div>
 
-    <nav class="mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="Filter by type">
+    <nav class="mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="{{ __('message.filter_by_type') }}">
         <a href="{{ route('forum.index') }}"
            @class([
                'shrink-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition',
                'bg-slate-900 text-white' => ! isset($filterName),
                'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50' => isset($filterName),
-           ])>All</a>
+           ])>{{ __('message.all') }}</a>
         @foreach ($types as $type)
             <a href="{{ route('forum.filter', ['typeFilter' => $type->id]) }}"
                @class([
@@ -54,8 +54,8 @@
             <x-post-card :post="$post"></x-post-card>
         @empty
             <div class="rounded-xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-200">
-                <p class="font-semibold text-slate-700">There are no posts</p>
-                <p class="mt-1 text-sm text-slate-500">Be the first to start a discussion.</p>
+                <p class="font-semibold text-slate-700">{{ __('message.no_posts') }}</p>
+                <p class="mt-1 text-sm text-slate-500">{{ __('message.be_first') }}</p>
             </div>
         @endforelse
     </div>

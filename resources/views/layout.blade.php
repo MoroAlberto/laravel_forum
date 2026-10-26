@@ -14,6 +14,7 @@
 <body class="font-sans antialiased text-slate-800">
 <div class="min-h-screen bg-slate-100">
     @include('layouts.navigation')
+    <x-toasts/>
     <!-- Page Content -->
     <main class="mx-auto max-w-3xl px-4 py-8 sm:px-6">
         @if (session('error'))

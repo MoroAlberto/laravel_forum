@@ -6,7 +6,7 @@
         <h1 class="mt-3 text-xl font-bold text-slate-900">{{ __('message.fallback') }}</h1>
         <a href="{{ route('forum.index') }}"
            class="mt-6 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
-            {{ __('Back') }}
+            {{ __('message.back') }}
         </a>
     </div>
 @endsection
