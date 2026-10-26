@@ -1,61 +1,66 @@
 @extends('layout')
 
 @section('slot')
-    @if(session('error'))
-        <x-alert message="{{session('error')}}" type="error"></x-alert>
-    @endif
-    @if (session('success'))
-        <x-alert message="{{session('success')}}" type="success"></x-alert>
-    @endif
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             <x-alert message="{{ $error }}" type="error"></x-alert>
         @endforeach
     @endif
-    <div class="rounded-xl border p-2 shadow-md bg-slate-200 mt-2 mb-2">
-        <div class="flex items-stretch">
-            <p class="ml-1 mr-1 text">Filter by: </p>
-            @foreach($types as $type)
-                <form action="{{ route('forum.filter') }}" method="POST" class="mr-2">
-                    @csrf
-                    <input type="hidden" name="typeFilter" id="typeFilter" value="{{$type->id}}">
-                    @if (isset($filterName) && $type->name === $filterName)
-                        <button
-                            class="rounded-2xl border bg-yellow-200 px-3 py-1 text-xs font-bold ">{{$type->name}}</button>
-                    @else
-                        <button
-                            class="rounded-2xl border bg-neutral-100 px-3 py-1 text-xs font-semibold ">{{$type->name}}</button>
-                    @endif
-                </form>
-            @endforeach
+
+    <div class="mt-2 flex items-center justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">
+                {{ $filterName ?? 'Latest discussions' }}
+            </h1>
+            <p class="mt-1 text-sm text-slate-500">
+                @guest
+                    <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">Log in</a>
+                    to start a discussion.
+                @else
+                    Share something with the community.
+                @endguest
+            </p>
         </div>
-    </div>
-    @if($posts->isEmpty())
-        <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
-            <div class="mt-2">
-                <p class="ml-1 mr-1 text">There are no posts</p>
-            </div>
-        </div>
-    @endif
-    @foreach ($posts as $post )
-        <x-post-card :post="$post"></x-post-card>
-    @endforeach
-    <div class="flex justify-between mt-4 ">
-        @guest
-            <p class="m-2">You must log in to make a post!</p>
-        @endguest
         @auth
-            <form action="{{route('forum.create')}}">
-                <x-primary-button>Create a post</x-primary-button>
-            </form>
+            <a href="{{ route('forum.create') }}"
+               class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-hidden focus:ring-3 focus:ring-indigo-300">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+                New post
+            </a>
         @endauth
-        @if (isset($filterName))
-            <form action="{{route('forum.index')}}">
-                <x-primary-button>Clear filters</x-primary-button>
-            </form>
-        @endif
     </div>
-    <div class="mx-auto pb-10">
+
+    <nav class="mt-6 flex gap-2 overflow-x-auto pb-1" aria-label="Filter by type">
+        <a href="{{ route('forum.index') }}"
+           @class([
+               'shrink-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition',
+               'bg-slate-900 text-white' => ! isset($filterName),
+               'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50' => isset($filterName),
+           ])>All</a>
+        @foreach ($types as $type)
+            <a href="{{ route('forum.filter', ['typeFilter' => $type->id]) }}"
+               @class([
+                   'shrink-0 rounded-full px-3.5 py-1.5 text-sm font-semibold transition',
+                   'bg-slate-900 text-white' => ($filterName ?? null) === $type->name,
+                   'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50' => ($filterName ?? null) !== $type->name,
+               ])>{{ $type->name }}</a>
+        @endforeach
+    </nav>
+
+    <div class="mt-6 space-y-4">
+        @forelse ($posts as $post)
+            <x-post-card :post="$post"></x-post-card>
+        @empty
+            <div class="rounded-xl bg-white p-10 text-center shadow-sm ring-1 ring-slate-200">
+                <p class="font-semibold text-slate-700">There are no posts</p>
+                <p class="mt-1 text-sm text-slate-500">Be the first to start a discussion.</p>
+            </div>
+        @endforelse
+    </div>
+
+    <div class="mt-8">
         @if ($posts instanceof \Illuminate\Contracts\Pagination\Paginator)
             {{ $posts->links() }}
         @endif

@@ -5,8 +5,9 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('forum.index') }}">
-                        <x-application-logo class="block h-10 w-auto fill-current text-gray-600"/>
+                    <a href="{{ route('forum.index') }}" class="flex items-center gap-2">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-600"/>
+                        <span class="text-lg font-extrabold tracking-tight text-slate-900">{{ config('app.name', 'Laravel') }}</span>
                     </a>
                 </div>
 
