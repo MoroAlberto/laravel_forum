@@ -2,12 +2,15 @@
 
 namespace App\View\Components;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 class Alert extends Component
 {
     public ?string $message;
+
     public string $type;
+
     /**
      * Create a new component instance.
      *
@@ -15,11 +18,11 @@ class Alert extends Component
      */
     public function __construct(?string $message = null, ?string $type = 'error')
     {
-        $this->message= $message;
-        $this->type= $type;
+        $this->message = $message;
+        $this->type = $type;
     }
 
-    public function backgroundColorClass() :string
+    public function backgroundColorClass(): string
     {
         return [
             'error' => 'red',
@@ -31,7 +34,7 @@ class Alert extends Component
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View|\Closure|string
+     * @return View|\Closure|string
      */
     public function render()
     {

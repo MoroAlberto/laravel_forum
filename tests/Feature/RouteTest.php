@@ -2,11 +2,21 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Database\Seeders\PostTableSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class RouteTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(PostTableSeeder::class);
+    }
+
     /**
      * A basic test example.
      *
@@ -48,7 +58,7 @@ class RouteTest extends TestCase
     public function test_filter_response_no_login()
     {
         $response = $this->post('/filter', [
-            'typeFilter' => 1
+            'typeFilter' => 1,
         ]);
         $response->assertStatus(200);
     }
@@ -60,8 +70,8 @@ class RouteTest extends TestCase
      */
     public function test_fallback_response_no_login()
     {
-        $response = $this->get('/asd',);
-        $response->assertStatus(200);
+        $response = $this->get('/asd');
+        $response->assertNotFound();
     }
 
     /**
@@ -116,7 +126,6 @@ class RouteTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-
     /**
      * A basic test example.
      *
@@ -135,7 +144,7 @@ class RouteTest extends TestCase
      */
     public function test_comment_store_response_no_login()
     {
-        $response = $this->post('/add-comment',[
+        $response = $this->post('/add-comment', [
             'comment' => 'Test comment',
             'post_id' => 1,
         ]);
@@ -149,8 +158,8 @@ class RouteTest extends TestCase
      */
     public function test_like_store_response_no_login()
     {
-        $response = $this->post('/like',[
-            'post_id' => 1
+        $response = $this->post('/like', [
+            'post_id' => 1,
         ]);
         $response->assertRedirect('/login');
     }

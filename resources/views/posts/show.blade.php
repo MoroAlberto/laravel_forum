@@ -26,7 +26,7 @@
             </div>
         </div>
     @endif
-    @foreach ($comments as $index => $comment )
+    @foreach ($comments as $comment)
         <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2 bg-slate-300">
             <div class="mt-2">
                 <div class="ml-1 mr-1 mb-3 text-xl">{{$comment->comment}}</div>
@@ -49,13 +49,13 @@
                     Create a comment
                 </h1>
             </div>
-            <form action="/add-comment" method="POST">
+            <form action="{{ route('comments.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="post_id" value="{{$post->id}}">
                 <div>
                     <label class="block text-sm font-bold text-gray-700" for="comment">Comment:</label>
                     <input type="text" name="comment"
-                           class="block w-full mt-1 border-gray-300 rounded-md shadow-sm placeholder:text-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                           class="block w-full mt-1 border-gray-300 rounded-md shadow-xs placeholder:text-gray-400 focus:border-indigo-300 focus:ring-3 focus:ring-indigo-200/50"
                            id="comment" placeholder="Please input a comment" required>
                 </div>
                 <div class="flex justify-between mt-4 ">

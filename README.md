@@ -3,20 +3,20 @@
 This is a little "for-fun" app
 
 Based on:
-- Laravel 9
-- Tailwind CSS 3
-- Vite 3
-- Docker 3
-- MySQL 8
+- Laravel 13
+- Tailwind CSS 4
+- Vite 8
+- Docker
+- MySQL 8.4
 - Alpine JS
-- Laravel Breeze
+- Laravel Breeze (Blade scaffolding)
 
 ## Technical Requirements
 
-•   PHP 8.0 or higher <br>
-•	Composer installed <br>
-•	Docker installed <br>
-•	Npm installed <br>
+- PHP 8.5 or higher
+- Composer 2
+- Docker
+- Node.js 20.19+ or 22.12+ with npm
 
 ## Installation
 
@@ -29,7 +29,7 @@ composer install
 npm install
 cp .env.example .env
 php artisan key:generate
-docker-compose up -d
+docker compose up -d
 php artisan migrate
 php artisan db:seed
 npm run build
@@ -44,6 +44,14 @@ username: test@gmail.com
 password: password
 ```
 but the forum is also accessible by those who do not have a login.
+
+## Tests
+
+Tests run on an in-memory SQLite database, so no running MySQL is needed:
+
+```bash
+php artisan test
+```
 
 ## Screenshot
 ![screenshot1.png](screenshot1.png)

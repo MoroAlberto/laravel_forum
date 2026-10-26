@@ -12,7 +12,7 @@
                bg-yellow-100 border-yellow-500 dark:bg-yellow-200
          @endswitch "
          role="alert" x-data="{show:true}" x-show="show">
-        <svg class="flex-shrink-0 w-5 h-5
+        <svg class="shrink-0 w-5 h-5
         @switch($type)
             @case('error')
                text-red-700

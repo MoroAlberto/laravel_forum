@@ -23,7 +23,7 @@ class Comment extends Model
         'user_id',
         'post_id',
         'comment',
-        'likes'
+        'likes',
     ];
 
     public function user(): BelongsTo
@@ -35,5 +35,4 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class);
     }
-
 }

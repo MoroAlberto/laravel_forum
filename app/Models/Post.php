@@ -16,7 +16,7 @@ class Post extends Model
         'post_type_id',
         'user_id',
         'title',
-        'content'
+        'content',
     ];
 
     public function comments(): HasMany

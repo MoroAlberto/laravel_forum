@@ -16,10 +16,10 @@
         <div class="flex items-stretch">
             <p class="ml-1 mr-1 text">Filter by: </p>
             @foreach($types as $type)
-                <form action="/filter" method="POST" class="mr-2">
+                <form action="{{ route('forum.filter') }}" method="POST" class="mr-2">
                     @csrf
                     <input type="hidden" name="typeFilter" id="typeFilter" value="{{$type->id}}">
-                    @if (isset($filterName) && $type->name == $filterName[0]->name)
+                    @if (isset($filterName) && $type->name === $filterName)
                         <button
                             class="rounded-2xl border bg-yellow-200 px-3 py-1 text-xs font-bold ">{{$type->name}}</button>
                     @else
@@ -56,6 +56,8 @@
         @endif
     </div>
     <div class="mx-auto pb-10">
-{{--        {{$posts->links()}}--}}
+        @if ($posts instanceof \Illuminate\Contracts\Pagination\Paginator)
+            {{ $posts->links() }}
+        @endif
     </div>
 @endsection

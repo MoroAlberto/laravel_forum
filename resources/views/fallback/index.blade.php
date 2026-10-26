@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fallback</title>
-    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
-</head>
-<body>
-<main class="app-container">
-    <h1>
-        {{ __('message.fallback') }}
-    </h1>
-</main>
-</body>
-</html>
+@extends('layout')
 
+@section('slot')
+    <div class="rounded-xl border p-5 shadow-md bg-white mt-2 mb-2">
+        <h1 class="text-3xl font-bold">
+            {{ __('message.fallback') }}
+        </h1>
+    </div>
+    <div class="flex justify-between mt-4">
+        <div></div>
+        <form action="{{ route('forum.index') }}" method="GET">
+            <x-primary-button>
+                {{ __('Back') }}
+            </x-primary-button>
+        </form>
+    </div>
+@endsection

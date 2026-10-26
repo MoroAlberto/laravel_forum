@@ -3,13 +3,12 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ValidatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -23,14 +22,10 @@ class ValidatePostRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'title' => 'required|string|unique:posts|max:255',
-            'content' => 'required|string',
-            'post_type_id' => 'required|integer|min:1|exists:post_types,id',
+        return [
+            'title' => ['required', 'string', 'max:255', Rule::unique('posts')->ignore($this->route('post'))],
+            'content' => ['required', 'string'],
+            'post_type_id' => ['required', 'integer', 'min:1', 'exists:post_types,id'],
         ];
-        if (in_array($this->method(), ['PUT', 'PATCH'])) {
-            $rules['title'] = 'required|string|max:255';
-        }
-        return $rules;
     }
 }
