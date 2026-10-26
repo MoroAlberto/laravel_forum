@@ -1,12 +1,5 @@
 @if($message)
-    @php
-        $styles = match ($type) {
-            'error' => 'bg-red-50 text-red-800 ring-red-200',
-            'success' => 'bg-emerald-50 text-emerald-800 ring-emerald-200',
-            default => 'bg-amber-50 text-amber-800 ring-amber-200',
-        };
-    @endphp
-    <div class="mb-4 flex items-start gap-3 rounded-lg p-4 text-sm font-medium ring-1 {{ $styles }}"
+    <div class="mb-4 flex items-start gap-3 rounded-lg p-4 text-sm font-medium ring-1 {{ \App\View\Components\Alert::styles($type) }}"
          role="alert" x-data="{ show: true }" x-show="show" x-transition.opacity>
         <svg class="h-5 w-5 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd"

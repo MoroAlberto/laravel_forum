@@ -2,12 +2,16 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FallbackController;
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
 require __DIR__.'/auth.php';
 
 Route::redirect('/', '/forum');
+
+Route::post('/locale', LocaleController::class)
+    ->name('locale.update');
 
 Route::prefix('/forum')->group(function () {
     Route::get('/', [PostController::class, 'index'])
@@ -25,6 +29,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [PostController::class, 'create'])
             ->name('forum.create');
         Route::post('/', [PostController::class, 'store'])
+            ->middleware('throttle:posts')
             ->name('forum.store');
         Route::get('/edit/{post}', [PostController::class, 'edit'])
             ->whereNumber('post')
@@ -37,8 +42,10 @@ Route::middleware('auth')->group(function () {
             ->name('forum.destroy');
     });
     Route::post('/add-comment', [CommentController::class, 'store'])
+        ->middleware('throttle:comments')
         ->name('comments.store');
     Route::post('/like', [PostController::class, 'like'])
+        ->middleware('throttle:likes')
         ->name('posts.like');
 });
 

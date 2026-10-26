@@ -4,6 +4,11 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 Alpine.start();
 
+// shows a toast, see resources/views/components/toasts.blade.php; without a message it uses a generic error
+window.notify = function (message, type = 'error') {
+    window.dispatchEvent(new CustomEvent('notify', { detail: { message, type } }));
+};
+
 window.addLike = async function (postId) {
     try {
         const { data } = await window.axios.post('/like', { post_id: postId }, {
@@ -15,13 +20,15 @@ window.addLike = async function (postId) {
             element.textContent = parseInt(element.textContent, 10) + 1;
             element.closest('[data-like]')?.classList.add('text-indigo-600');
         } else {
-            alert('You already liked this post');
+            window.notify(data.text, 'warning');
         }
     } catch (error) {
         if (error.response?.status === 401) {
-            alert('Only register users can like a post');
+            // the session expired, guests get a login link instead of the like button
+            window.location.href = '/login';
         } else {
             console.error(error);
+            window.notify();
         }
     }
 };

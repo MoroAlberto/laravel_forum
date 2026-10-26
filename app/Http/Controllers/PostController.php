@@ -132,6 +132,7 @@ class PostController extends Controller
         if ($request->expectsJson()) {
             return [
                 'message' => $like->wasRecentlyCreated ? 'added' : 'already_liked',
+                'text' => __($like->wasRecentlyCreated ? 'message.like_added' : 'message.already_liked'),
                 'success' => $like->wasRecentlyCreated,
             ];
         }

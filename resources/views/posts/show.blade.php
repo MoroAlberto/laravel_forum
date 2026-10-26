@@ -6,7 +6,7 @@
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/>
         </svg>
-        {{ __('Back') }}
+        {{ __('message.back') }}
     </a>
 
     <article class="mt-4 rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8">
@@ -28,7 +28,7 @@
 
     <section class="mt-10">
         <h2 class="text-lg font-bold text-slate-900">
-            Comments <span class="font-semibold text-slate-400">{{ $comments->count() }}</span>
+            {{ __('message.comments') }} <span class="font-semibold text-slate-400">{{ $comments->count() }}</span>
         </h2>
 
         <div class="mt-4 space-y-3">
@@ -46,7 +46,7 @@
                 </div>
             @empty
                 <p class="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center text-sm text-slate-500">
-                    There are no comments on this post
+                    {{ __('message.no_comments') }}
                 </p>
             @endforelse
         </div>
@@ -56,19 +56,19 @@
                   class="mt-6 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
                 @csrf
                 <input type="hidden" name="post_id" value="{{ $post->id }}">
-                <label class="sr-only" for="comment">Comment</label>
+                <label class="sr-only" for="comment">{{ __('message.comment') }}</label>
                 <textarea name="comment" id="comment" rows="3" required
                           class="block w-full rounded-lg border-slate-300 shadow-xs placeholder:text-slate-400 focus:border-indigo-400 focus:ring-3 focus:ring-indigo-200/50"
-                          placeholder="Write a comment…">{{ old('comment') }}</textarea>
+                          placeholder="{{ __('message.write_comment') }}">{{ old('comment') }}</textarea>
                 <x-input-error :messages="$errors->get('comment')" class="mt-2"/>
                 <div class="mt-3 flex justify-end">
-                    <x-primary-button>{{ __('Submit comment') }}</x-primary-button>
+                    <x-primary-button>{{ __('message.submit_comment') }}</x-primary-button>
                 </div>
             </form>
         @else
             <p class="mt-6 text-sm text-slate-500">
-                <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">Log in</a>
-                to post a comment.
+                <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">{{ __('message.log_in') }}</a>
+                {{ __('message.to_comment') }}
             </p>
         @endauth
     </section>
