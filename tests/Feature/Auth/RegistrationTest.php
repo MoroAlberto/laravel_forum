@@ -16,25 +16,49 @@ class RegistrationTest extends TestCase
         $response->assertStatus(302);
     }
 
-    public function test_registration_screen_can_be_rendered_by_registered()
+    public function test_registration_screen_can_be_rendered_by_admin()
     {
-        $user = User::factory()->create();
-        $response = $this->actingAs($user)
-            ->withSession(['banned' => false])
-            ->get('/register');
+        $admin = User::factory()->admin()->create();
+        $response = $this->actingAs($admin)->get('/register');
         $response->assertStatus(200);
     }
 
-    public function test_new_users_can_register()
+    public function test_registration_screen_is_forbidden_for_non_admin()
     {
         $user = User::factory()->create();
-        $response = $this->actingAs($user)->post('/register', [
+
+        $this->actingAs($user)->get('/register')->assertForbidden();
+        $this->actingAs($user)->post('/register', [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ])->assertForbidden();
+
+        $this->assertDatabaseMissing('users', ['email' => 'test@example.com']);
+    }
+
+    public function test_create_user_link_is_shown_only_to_admins()
+    {
+        $this->actingAs(User::factory()->create())->get('/forum')
+            ->assertDontSee(route('register'));
+
+        $this->actingAs(User::factory()->admin()->create())->get('/forum')
+            ->assertSee(route('register'));
+    }
+
+    public function test_admin_can_create_users_and_stays_logged_in()
+    {
+        $admin = User::factory()->admin()->create();
+        $response = $this->actingAs($admin)->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
         ]);
-        $this->assertAuthenticated();
+
+        $this->assertDatabaseHas('users', ['email' => 'test@example.com', 'is_admin' => false]);
+        $this->assertAuthenticatedAs($admin);
         $response->assertRedirect(route('forum.index', absolute: false));
     }
 }

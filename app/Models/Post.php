@@ -26,7 +26,8 @@ class Post extends Model
 
     public function likes(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'likes')->withPivot('is_dislike')->withTimestamps();
+        // dislikes are stored in the same table, they must not be counted as likes
+        return $this->belongsToMany(User::class, 'likes')->wherePivot('is_dislike', 0)->withPivot('is_dislike')->withTimestamps();
     }
 
     public function postType(): BelongsTo

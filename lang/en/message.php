@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'error' => 'This post does not exist',
     'success' => 'Post created successfully',
     'success_update' => 'Post updated successfully',
     'no_permission' => 'You do not have permission to edit this post',
     'delete' => 'Post deleted successfully',
+    'user_created' => 'User created successfully',
     'dismiss' => 'Dismiss',
     'homepage' => 'Homepage',
     'create_user' => 'Create user',

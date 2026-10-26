@@ -12,14 +12,14 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
+                    <x-nav-link :href="route('forum.index')" :active="request()->routeIs('forum.index')">
                         {{ __('message.homepage') }}
                     </x-nav-link>
-                    @auth
+                    @can('create', App\Models\User::class)
                         <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
                             {{ __('message.create_user') }}
                         </x-nav-link>
-                    @endauth
+                    @endcan
                 </div>
             </div>
 
@@ -86,9 +86,14 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('forum.index')" :active="request()->routeIs('dashboard')">
+            <x-responsive-nav-link :href="route('forum.index')" :active="request()->routeIs('forum.index')">
                 {{ __('message.dashboard') }}
             </x-responsive-nav-link>
+            @can('create', App\Models\User::class)
+                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                    {{ __('message.create_user') }}
+                </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->
@@ -111,6 +116,13 @@
                     </form>
                 </div>
             @endauth
+            @guest
+                <div class="space-y-1">
+                    <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                        {{ __('message.login') }}
+                    </x-responsive-nav-link>
+                </div>
+            @endguest
         </div>
 
     </div>

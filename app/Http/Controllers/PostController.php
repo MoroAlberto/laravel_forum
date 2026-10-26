@@ -96,7 +96,7 @@ class PostController extends Controller
     public function filter(Request $request): View
     {
         $validated = $request->validate([
-            'typeFilter' => 'required|integer|exists:post_types,id',
+            'typeFilter' => 'required|integer',
         ]);
 
         $filterType = PostType::findOrFail($validated['typeFilter']);
